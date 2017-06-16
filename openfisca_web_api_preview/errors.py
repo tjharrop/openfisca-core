@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import jsonify, make_response
+from flask import jsonify, make_response, abort
 
 
 def handle_invalid_json(error):
@@ -8,4 +8,4 @@ def handle_invalid_json(error):
         'error': 'Invalid JSON: {}'.format(error.message),
         })
 
-    return make_response(json_response, 400)
+    abort(make_response(json_response, 400))

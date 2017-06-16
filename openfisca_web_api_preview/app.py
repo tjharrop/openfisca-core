@@ -52,7 +52,7 @@ def create_app(country_package = os.environ.get('COUNTRY_PACKAGE')):
     @app.route('/calculate', methods=['POST'])
     def calculate():
         request.on_json_loading_failed = handle_invalid_json
-        return request.get_json()
+        request.get_json()
 
     @app.after_request
     def apply_headers(response):
