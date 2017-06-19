@@ -5,6 +5,7 @@ import json
 from httplib import BAD_REQUEST
 
 from nose.tools import assert_equal, assert_in
+import dpath
 
 from . import subject
 
@@ -19,6 +20,7 @@ def post_json(data = None, file = None):
 
 invalid_json_response = post_json('{"a" : "x", "b"}')
 
+
 def test_invalid_json_return_code():
     assert_equal(invalid_json_response.status_code, BAD_REQUEST)
 
@@ -32,45 +34,21 @@ def test_invalid_json_response_content():
     assert_in('column', error_message)
 
 
-wrong_type_response = post_json('["An", "array"]')
+def check_response(data, expected_error_code, path_to_check, content_to_check):
+    response = post_json(data)
+    assert_equal(response.status_code, expected_error_code)
+    json_response = json.loads(response.data)
+    content = dpath.util.get(json_response, path_to_check)
 
-def test_wrong_type_return_code():
-    assert_equal(wrong_type_response.status_code, BAD_REQUEST)
-
-
-def test_wrong_type_response_content():
-    response = json.loads(wrong_type_response.data)
-    assert_in('Invalid type', response['error'])
+    assert_in(content_to_check, content)
 
 
-unknown_entity_response = post_json('{"unknown_entity": {}}')
+def test_incorrect_inputs():
+    tests = [
+        ('["An", "array"]', BAD_REQUEST, 'error', 'Invalid type'),
+        ('{"unknown_entity": {}}', BAD_REQUEST, 'unknown_entity', 'entity is not defined',),
+        ('{"households": {"parents": {}}}', BAD_REQUEST, 'households/parents', 'type',)
+        ]
 
-def test_unknown_entity_return_code():
-    assert_equal(unknown_entity_response.status_code, BAD_REQUEST)
-
-
-def test_unknown_entity_response_content():
-    response = json.loads(unknown_entity_response.data)
-    assert_in('entity is not defined', response['unknown_entity'])
-
-invalid_role_type_response = post_json('{"households": {"parents": {}}}')
-
-def test_invalid_role_type_return_code():
-    assert_equal(invalid_role_type_response.status_code, BAD_REQUEST)
-
-
-def test_invalid_role_type_response_content():
-    response = json.loads(invalid_role_type_response.data)
-    assert_in('type', response['households']['parents'])
-
-another_test_response = post_json('{"households": {"parents": [{}, {}]}}')
-
-
-
-def test_another_test_return_code():
-    assert_equal(another_test_response.status_code, BAD_REQUEST)
-
-
-def test_another_test_response_content():
-    response = json.loads(another_test_response.data)
-    assert_in('type', response['households']['parents'])
+    for test in tests:
+        yield (check_response,) + test
