@@ -390,3 +390,14 @@ class TaxBenefitSystem(object):
             'repository_url': repository_url,
             'location': location,
             }
+
+
+    def get_variables(self, entity = None):
+        if not entity:
+            return self.column_by_name
+        else:
+            return {
+            variable_name: variable
+            for variable_name, variable in self.column_by_name.iteritems()
+            if variable.entity == entity
+            }

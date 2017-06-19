@@ -47,7 +47,8 @@ def test_incorrect_inputs():
     tests = [
         ('["An", "array"]', BAD_REQUEST, 'error', 'Invalid type'),
         ('{"unknown_entity": {}}', BAD_REQUEST, 'unknown_entity', 'entity is not defined',),
-        ('{"households": {"parents": {}}}', BAD_REQUEST, 'households/parents', 'type',)
+        ('{"households": {"parents": {}}}', BAD_REQUEST, 'households/parents', 'type',),
+        ('{"persons": {"unknown_variable": {}}}', BAD_REQUEST, 'persons/unknown_variable', 'You tried to calculate or to set',)
         ]
 
     for test in tests:
