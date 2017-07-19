@@ -87,8 +87,33 @@ def build_variable(variable, country_package_metadata):
     return result
 
 
+def enrich_variable_formulas(variables):
+    dependencies = {}
+    for name in variables:
+        variable = variables[name]
+        for period in variable['formulas']:
+            formula = variable['formulas'][period]
+            if formula is not None:
+                # rent is never negative
+                deps = ['rent']
+                formula['dependsOn'] = []
+                for dep in deps:
+                    formula['dependsOn'].append(dep)
+                    if (dep not in dependencies):
+                        dependencies[dep] = []
+                    dependencies[dep].append(name)
+    # Add depends_on array for each formula
+    # Record dependency to
+
+    # Add a called_by array on variable for recorded data
+    for name in dependencies:
+        variable = variables[name]
+        variable['calledBy'] = dependencies[name]
+    return variables
+    
+
 def build_variables(tax_benefit_system, country_package_metadata):
-    return {
+    return enrich_variable_formulas({
         name: build_variable(variable, country_package_metadata)
         for name, variable in tax_benefit_system.column_by_name.iteritems()
-        }
+        })
