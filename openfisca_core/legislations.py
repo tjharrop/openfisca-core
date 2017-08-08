@@ -5,7 +5,8 @@
 
 
 import logging
-import numpy
+import numpy as np
+import numpy_indexed as npi
 
 from . import conv, periods, taxscales
 
@@ -71,12 +72,8 @@ class CompactNode(object):
             )
 
     def __getitem__(self, key):
-        if isinstance(key, numpy.ndarray):
-            # Get the parameters values indexed by names, without metadata
-            copy = {k:v for k,v in self.__dict__.items() if k not in ['name', 'instant']}
-            values = copy.values()
-            names = copy.keys()
-            return numpy.select([key == name for name in names], values)
+        if isinstance(key, np.ndarray):
+            return self.to_vectorial_compact_node()[key]
         return self.__dict__[key]
 
     def __init__(self, instant, name = None):
@@ -92,6 +89,24 @@ class CompactNode(object):
 
     def __setitem__(self, key, value):
         self.__dict__[key] = value
+
+    def to_vectorial_compact_node(self):
+        subnodes_name = [key for key in self.keys() if key not in ['instant', 'name']]
+        vectorial_subnodes = tuple([
+            self[subnode_name].to_vectorial_compact_node().vector if isinstance(self[subnode_name], CompactNode) else self[subnode_name]
+            for subnode_name in subnodes_name
+            ])
+        structured_array = np.array(
+            [vectorial_subnodes],
+            dtype = [
+                (subnode_name, subnode.dtype if isinstance(subnode, np.recarray) else 'float')
+                for (subnode_name, subnode) in zip(subnodes_name, vectorial_subnodes)
+                ]
+            )
+
+        return VectorialCompactNode(structured_array.view(np.recarray))
+
+
 
     def combine_tax_scales(self):
         """Combine all the MarginalRateTaxScales in the node into a single MarginalRateTaxScale."""
@@ -159,6 +174,36 @@ class CompactNode(object):
     def values(self):
         return self.__dict__.values()
 
+
+class VectorialCompactNode(object):
+
+    def __init__(self, vector):
+        self.vector = vector
+
+    def __getattr__(self, attribute):
+        result = getattr(self.vector, attribute)
+        if isinstance(result, np.recarray):
+            return VectorialCompactNode(result)
+        return result
+
+    def __getitem__(self, key):
+        if isinstance(key, np.ndarray):
+            key = key.astype('str')
+            dtype = self.vector[key[0]].dtype
+            names = [name for name in self.dtype.names]
+            values = np.asarray([self.vector[name][0] for name in names])
+            idx = npi.indices(names, key)
+            remapped_array = values[idx]
+
+            result = np.array(remapped_array, dtype=dtype)
+            if np.issubdtype(dtype, np.record):
+                return VectorialCompactNode(result.view(np.recarray))
+            return result
+        else:
+            result =  self.vector[key]
+            if isinstance(result, np.recarray):
+                return VectorialCompactNode(result)
+            return result
 
 class TracedCompactNode(object):
     """
