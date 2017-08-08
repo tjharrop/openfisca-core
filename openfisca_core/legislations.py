@@ -5,6 +5,7 @@
 
 
 import logging
+import numpy
 
 from . import conv, periods, taxscales
 
@@ -70,6 +71,12 @@ class CompactNode(object):
             )
 
     def __getitem__(self, key):
+        if isinstance(key, numpy.ndarray):
+            # Get the parameters values indexed by names, without metadata
+            copy = {k:v for k,v in self.__dict__.items() if k not in ['name', 'instant']}
+            values = copy.values()
+            names = copy.keys()
+            return numpy.select([key == name for name in names], values)
         return self.__dict__[key]
 
     def __init__(self, instant, name = None):
