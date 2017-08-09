@@ -192,10 +192,10 @@ class VectorialCompactNode(object):
             dtype = self.vector[key[0]].dtype
             names = [name for name in self.dtype.names]
             values = np.asarray([self.vector[name][0] for name in names])
-            idx = npi.indices(names, key)
+            idx = npi.indices(names, key)  # Key error is raised here if there is an unknown key
             remapped_array = values[idx]
 
-            result = np.array(remapped_array, dtype=dtype)
+            result = np.array(remapped_array, dtype=dtype)  # ValueError is raised here if dtype is float but the array contains tuple.
             if np.issubdtype(dtype, np.record):
                 return VectorialCompactNode(result.view(np.recarray))
             return result
