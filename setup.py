@@ -9,7 +9,7 @@ setup(
     name = 'OpenFisca-Core',
     version = '16.2.0',
     author = 'OpenFisca Team',
-    author_email = 'contact@openfisca.fr',
+    author_email = 'contact@openfisca.org',
     classifiers = [
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Legal Industry",
