@@ -1,8 +1,15 @@
-# OpenFisca Core
+[OpenFisca](https://doc.openfisca.org/) helps you turn fiscal and social law into software.
 
-[OpenFisca](https://doc.openfisca.fr/) is a versatile microsimulation free software. Check the [online documentation](https://doc.openfisca.fr/) for more details.
+`OpenFisca-Core` is the computation engine that is used by country packages to model tax and benefit systems.
 
-This package contains the core features of OpenFisca, which are meant to be used by country packages such as [OpenFisca-France](https://github.com/openfisca/openfisca-france). Bootstrapping your own country package should not take more than 5 minutes: check our [country package template](https://github.com/openfisca/country-template).
+### [More information](https://openfisca.org)
+
+### [Documentation](https://doc.openfisca.org/)
+
+### [Explore a full model](https://legislation.openfisca.fr)
+
+### [Bootstrap a new country package template](https://github.com/openfisca/country-template)
+
 
 ## Environment
 
@@ -10,7 +17,7 @@ This package requires Python 2.7
 
 ## Installation
 
-If you're developping your own country package, you don't need to explicitly install OpenFisca-Core. It just needs to appear [in your package dependencies](https://github.com/openfisca/openfisca-france/blob/18.2.1/setup.py#L53).
+**If you're developing your own country package, you don't need to explicitly install `OpenFisca-Core`.** It just needs to appear [in your package dependencies](https://github.com/openfisca/openfisca-france/blob/18.2.1/setup.py#L53). Installing `OpenFisca-Core` is only needed if you want to contribute changes to the _core computation engine_, not a model of a specific country.
 
 If you want to contribute to OpenFisca-Core itself, welcome! To install it locally in development mode:
 
