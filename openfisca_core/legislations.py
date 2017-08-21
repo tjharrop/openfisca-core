@@ -322,7 +322,7 @@ def generate_dated_legislation_json(legislation_json, instant):
             '@type': u'Node',
             'children': dict(),
             })
-    dated_legislation_json['@context'] = u'https://openfisca.fr/contexts/dated-legislation.jsonld'
+    dated_legislation_json['@context'] = u'https://openfisca.org/contexts/dated-legislation.jsonld'
     dated_legislation_json['instant'] = instant_str
     return dated_legislation_json
 
@@ -422,7 +422,7 @@ def validate_dated_node_json(node, state = None):
             '@context': conv.pipe(
                 conv.test_isinstance(basestring),
                 conv.make_input_to_url(full = True),
-                conv.test_equals(u'https://openfisca.fr/contexts/dated-legislation.jsonld'),
+                conv.test_equals(u'https://openfisca.org/contexts/dated-legislation.jsonld'),
                 ),
             '@type': conv.pipe(
                 conv.test_isinstance(basestring),
@@ -674,7 +674,7 @@ def validate_node_json(node, state = None):
             '@context': conv.pipe(
                 conv.test_isinstance(basestring),
                 conv.make_input_to_url(full = True),
-                conv.test_equals(u'https://openfisca.fr/contexts/legislation.jsonld'),
+                conv.test_equals(u'https://openfisca.org/contexts/legislation.jsonld'),
                 ),
             '@type': conv.pipe(
                 conv.test_isinstance(basestring),

@@ -334,7 +334,7 @@ These breaking changes only concern variable and tax and benefit system **metada
   - Change `periods.period` signature.
     - It now only accepts strings.
   - Restrict the possible inputs for `periods.period`
-    - The authorized formats are listed in [the doc](https://doc.openfisca.fr/periodsinstants.html)
+    - The authorized formats are listed in [the doc](https://doc.openfisca.org/periodsinstants.html)
   - Deprecate and remove:
     - `periods.json_or_python_to_period`
     - `periods.make_json_or_python_to_period`
@@ -396,7 +396,7 @@ These breaking changes only concern variable and tax and benefit system **metada
 
 #### Documentation
 
-* the attribute `definition_period` is documented here : https://doc.openfisca.fr/coding-the-legislation/35_periods.html
+* the attribute `definition_period` is documented here : https://doc.openfisca.org/coding-the-legislation/35_periods.html
 
 ### 5.0.2
 
