@@ -26,7 +26,7 @@ setup(
         ('share/openfisca/openfisca-core', ['CHANGELOG.md', 'LICENSE.AGPL.txt', 'README.md']),
         ],
     entry_points = {
-        'console_scripts': ['openfisca-run-test=openfisca_core.scripts.run_test:main'],
+        'console_scripts': ['openfisca=openfisca_core.scripts.openfisca_cli:main'],
         },
     extras_require = {
         'test': [
