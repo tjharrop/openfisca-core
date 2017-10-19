@@ -103,7 +103,7 @@ class CompactNode(object):
         return combined_tax_scales
 
     def copy(self, deep = False):
-        new = self.__class__()
+        new = self.__class__(self.instant, self.name)
         for name, value in self.iteritems():
             if deep:
                 if isinstance(value, CompactNode):
