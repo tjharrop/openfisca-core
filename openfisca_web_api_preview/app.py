@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from copy import deepcopy
 import os
 from os import linesep
 from flask import Flask, jsonify, abort, request, make_response
@@ -130,10 +131,14 @@ def create_app(tax_benefit_system,
         for computation in requested_computations:
             path = computation[0]
             entity_plural, entity_id, variable_name, period = path.split('/')
-            simulation.calculate(variable_name, period).tolist()
+            simulation.calculate(variable_name, period)
+
+        trace = deepcopy(simulation.tracer.trace)
+        for vector_key, vector_trace in trace.iteritems():
+            vector_trace['value'] = vector_trace['value'].tolist()
 
         return jsonify({
-            "trace": simulation.tracer.trace,
+            "trace": trace,
             "entitiesDescription": {entity.plural: entity.ids for entity in simulation.entities.itervalues()},
             "requestedCalculations": list(simulation.tracer.requested_calculations)
             })
