@@ -1,6 +1,29 @@
 # Changelog
 
-# 20.0.0 [#590](https://github.com/openfisca/openfisca-core/pull/583)
+## 20.1.0 [#598](https://github.com/openfisca/openfisca-core/pull/598)
+
+#### New features
+
+- Improve `Tracer`:
+
+  - Introduce an `aggregate` option in [`tracer.print_computation_log`](http://openfisca.readthedocs.io/en/latest/tracer.html#openfisca_core.tracers.Tracer.print_computation_log) to handle large population simulations.
+  - Introduce [`tracer.usage_stats`](http://openfisca.readthedocs.io/en/latest/tracer.html#openfisca_core.tracers.Tracer.usage_stats) to keep track of the number of times a variable is computed.
+
+- Introduce methods to keep track of memory usage:
+
+  - Introduce [`holder.get_memory_usage`](http://localhost:8000/holder.html#openfisca_core.holders.Holder.get_memory_usage)
+  - Introduce `entity.get_memory_usage`
+  - Introduce `simulation.get_memory_usage`
+
+- Improve `Holder` public interface:
+
+  - Enhance [`holder.delete_arrays`](http://openfisca.readthedocs.io/en/latest/holder.html#openfisca_core.holders.Holder.get_memory_usage) to be able to remove known values only for a specific period
+  - Introduce [`holder.get_known_periods`](http://openfisca.readthedocs.io/en/latest/holder.html#openfisca_core.holders.Holder.get_known_periods)
+
+- Re-introduce `taxscales.combine_tax_scales` to combine several tax scales.
+
+
+# 20.0.0 [#590](https://github.com/openfisca/openfisca-core/pull/590)
 
 #### Breaking changes
 
@@ -13,7 +36,7 @@
     * `bool`
     * `str`
     * `date`
-    * `Enum` 
+    * `Enum`
 
 Before:
 
