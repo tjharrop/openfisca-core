@@ -341,6 +341,9 @@ class Holder(object):
     def put_in_cache(self, value, period, extra_params = None):
         simulation = self.simulation
 
+        if value.dtype != self.variable.dtype:
+            value = value.astype(self.variable.dtype)
+
         if self.variable.definition_period != ETERNITY:
             if period is None:
                 raise ValueError('A period must be specified to put values in cache, except for variables with ETERNITY as as period_definition.')
