@@ -7,14 +7,15 @@ import os
 
 import numpy as np
 
+from . import periods
 from .commons import empty_clone
-import periods
 from .periods import MONTH, YEAR, ETERNITY
 from columns import make_column_from_variable
 
 
 class DatedHolder(object):
-    """A wrapper of the value of a variable for a given period (and possibly a given set of extra parameters).
+    """
+        A wrapper of the value of a variable for a given period (and possibly a given set of extra parameters).
     """
     holder = None
     period = None
@@ -52,6 +53,9 @@ class DatedHolder(object):
 
 
 class Holder(object):
+    """
+        A holder keeps tracks of a variable values after they have been calculated, or set as an input.
+    """
     _array = None  # Only used when variable.definition_period == ETERNITY
     _array_by_period = None  # Only used when variable.definition_period != ETERNITY
     variable = None
@@ -118,10 +122,10 @@ class Holder(object):
         return new
 
     def compute(self, period, **parameters):
-        """Compute array if needed and return a dated holder containing it.
-
-        The returned dated holder is always of the requested period and this method never returns None.
         """
+            Compute the variable's value for the ``period`` and return a dated holder containing the value.
+        """
+
         if self.simulation.trace:
             self.simulation.tracer.record_calculation_start(self.variable.name, period, **parameters)
         variable = self.variable
@@ -214,6 +218,12 @@ class Holder(object):
             period).encode('utf-8'))
 
     def delete_arrays(self, period = None):
+        """
+            If ``period`` is ``None``, remove all known values of the variable.
+
+            If ``period`` is not ``None``, only remove all values for any period included in period (e.g. if period is "2017", values for "2017-01", "2017-07", etc. would be removed)
+
+        """
         if self._array is not None:
             del self._array
         if self._array_by_period is not None and period is None:
@@ -315,7 +325,7 @@ class Holder(object):
 
     def get_known_periods(self):
         """
-        Get the list of periods the variable value is known for
+        Get the list of periods the variable value is known for.
         """
         if self.variable.definition_period == ETERNITY:
             if self.array is not None:
