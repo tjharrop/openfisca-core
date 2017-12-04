@@ -104,11 +104,6 @@ class Tracer(object):
             self.trace[key] = {'dependencies': []}
         self.stack.append(key)
         self._computation_log.append((key, len(self.stack)))
-
-        if not self.usage_stats.get(variable_name):
-            self.usage_stats[variable_name] = dict(
-                nb_hits = 0
-                )
         self.usage_stats[variable_name]['nb_hits'] += 1
 
     def record_calculation_end(self, variable_name, period, result, **parameters):
@@ -154,7 +149,12 @@ class Tracer(object):
 
     def print_computation_log(self, aggregate = False):
         """
-            Print the computation log of a simulation
+            Print the computation log of a simulation.
+
+            If ``aggregate`` is ``False`` (default), print the value of each computed vector.
+
+            If ``aggregate`` is ``True``, only print the minimum, maximum, and average value of each computed vector.
+            This mode is more suited for simulations on a large population.
         """
         for node, depth in self._computation_log:
             if not self.trace.get(node):
