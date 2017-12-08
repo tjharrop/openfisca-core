@@ -221,7 +221,8 @@ class Holder(object):
         """
             If ``period`` is ``None``, remove all known values of the variable.
 
-            If ``period`` is not ``None``, only remove the values known for a period included in ``period``.
+            If ``period`` is not ``None``, only remove all values for any period included in period (e.g. if period is "2017", values for "2017-01", "2017-07", etc. would be removed)
+
         """
         if self._array is not None:
             del self._array
@@ -231,9 +232,9 @@ class Holder(object):
             if not isinstance(period, periods.Period):
                 period = periods.period(period)
             self._array_by_period = {
-                cache_period: value
-                for cache_period, value in self._array_by_period.iteritems()
-                if not period.contains(cache_period)
+                period_item: value
+                for period_item, value in self._array_by_period.iteritems()
+                if not period.contains(period_item)
                 }
 
     def get_array(self, period, extra_params = None):
@@ -293,7 +294,7 @@ class Holder(object):
             )
 
         if self._array is not None:
-            # Only used when definition period is ETERNITY
+            # self._array is only used when definition period is ETERNITY"
             usage.update(dict(
                 nb_arrays = 1,
                 total_nb_bytes = self._array.nbytes,

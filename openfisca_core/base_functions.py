@@ -17,11 +17,9 @@ def permanent_default_value(formula, simulation, period, *extra_params):
 
 def requested_period_added_value(formula, simulation, period, *extra_params):
     warnings.warn(
-        u"requested_period_added_value is deprecated. "
-        u"Since OpenFisca Core 6.0 and the introduction of definition_period, "
-        u"the base_function requested_period_added_value has the same effect "
-        u"that requested_period_default_value, the default base_function for float and int variables."
-        u"Specifiyng it is thus useless.",
+        u"Since OpenFisca Core 6.0, requested_period_added_value has the same effect "
+        u"than requested_period_default_value, the default base_function for float and int variables. "
+        u"There is thus no need to specifiy it. ",
         Warning
         )
     return requested_period_default_value(formula, simulation, period, *extra_params)
