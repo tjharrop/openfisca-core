@@ -5,7 +5,6 @@ import warnings
 import numpy as np
 
 from . import periods
-from periods import YEAR
 
 
 def permanent_default_value(formula, simulation, period, *extra_params):
