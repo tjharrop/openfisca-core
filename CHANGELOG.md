@@ -11,7 +11,7 @@
 
 - Introduce methods to keep track of memory usage:
 
-  - Introduce [`holder.get_memory_usage`](http://localhost:8000/holder.html#openfisca_core.holders.Holder.get_memory_usage)
+  - Introduce [`holder.get_memory_usage`](http://openfisca.readthedocs.io/en/latest/holder.html#openfisca_core.holders.Holder.get_memory_usage)
   - Introduce `entity.get_memory_usage`
   - Introduce `simulation.get_memory_usage`
 
