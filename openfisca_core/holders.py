@@ -123,9 +123,7 @@ class Holder(object):
 
     def compute(self, period, **parameters):
         """
-            Compute the variable for ``period`` and return a dated holder containing the value.
-
-            The returned :any:`DatedHolder` is always of the requested period and this method never returns ``None``.
+            Compute the variable's value for the ``period`` and return a dated holder containing the value.
         """
 
         if self.simulation.trace:
