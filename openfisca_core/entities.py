@@ -388,8 +388,8 @@ class GroupEntity(Entity):
         return self._roles_count
 
     @roles_count.setter
-    def roles_count(self, roles_count):
-        self._roles_count = roles_count
+    def roles_count(self, value):
+        self._roles_count = value
 
     #  Aggregation persons -> entity
 
