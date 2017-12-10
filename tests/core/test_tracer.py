@@ -19,6 +19,6 @@ def test_variable_stats():
     tracer.record_calculation_start("B", 2017)
     tracer.record_calculation_start("B", 2016)
 
-    assert_equals(tracer.usage_stats['B']['nb_hits'], 3)
-    assert_equals(tracer.usage_stats['A']['nb_hits'], 1)
-    assert_equals(tracer.usage_stats['C']['nb_hits'], 0)
+    assert_equals(tracer.usage_stats['B']['nb_requests'], 3)
+    assert_equals(tracer.usage_stats['A']['nb_requests'], 1)
+    assert_equals(tracer.usage_stats['C']['nb_requests'], 0)

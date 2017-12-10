@@ -53,10 +53,10 @@ class Tracer(object):
 
               {
                 'salary': {
-                  'nb_hits': 17
+                  'nb_requests': 17
                   },
                 'global_income': {
-                  'nb_hits': 1
+                  'nb_requests': 1
                   }
               }
 
@@ -66,7 +66,7 @@ class Tracer(object):
         self.requested_calculations = set()
         self.stack = []
         self.trace = {}
-        self.usage_stats = defaultdict(lambda: {"nb_hits": 0})
+        self.usage_stats = defaultdict(lambda: {"nb_requests": 0})
         self._computation_log = []
 
     def clone(self):
@@ -104,7 +104,7 @@ class Tracer(object):
             self.trace[key] = {'dependencies': []}
         self.stack.append(key)
         self._computation_log.append((key, len(self.stack)))
-        self.usage_stats[variable_name]['nb_hits'] += 1
+        self.usage_stats[variable_name]['nb_requests'] += 1
 
     def record_calculation_end(self, variable_name, period, result, **parameters):
         """
