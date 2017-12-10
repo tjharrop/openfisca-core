@@ -306,9 +306,9 @@ class Holder(object):
                 len(array_or_dict) if isinstance(array_or_dict, dict) else 1
                 for array_or_dict in self._array_by_period.itervalues()
                 ])
-            array = self._array_by_period.itervalues().next()
+            array = self._array_by_period.values()[0]
             if isinstance(array, dict):
-                array = array.itervalues().next()
+                array = array.values()[0]
             usage.update(dict(
                 nb_arrays = nb_arrays,
                 total_nb_bytes = array.nbytes * nb_arrays,
