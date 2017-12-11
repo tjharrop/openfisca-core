@@ -370,7 +370,7 @@ class Holder(object):
                     u'Unable to set value "{}" for variable "{}", as the variable dtype "{}" does not match the value dtype "{}".'
                     .format(value, self.variable.name, self.variable.dtype, value.dtype)
                     .encode('utf-8'))
-`
+
         if self.variable.definition_period != ETERNITY:
             if period is None:
                 raise ValueError('A period must be specified to put values in cache, except for variables with ETERNITY as as period_definition.')
