@@ -3,6 +3,11 @@
 from openfisca_core.parameters import Parameter, ParameterNode, Scale
 
 
+import logging
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
+
+
 def transform_values_history(values_history):
     values_history_transformed = {}
     for value_at_instant in values_history.values_list:
@@ -26,14 +31,30 @@ def get_value(date, values):
 
 def transform_scale(scale):
     # preprocess brackets
-    brackets = [{
-        'thresholds': transform_values_history(bracket.threshold),
-        'rates': transform_values_history(bracket.rate),
-        } for bracket in scale.brackets]
+    brackets = []
+    for bracket in scale.brackets:
+        bracket_json = { 'thresholds': transform_values_history(bracket.threshold) }
+        if hasattr(bracket, 'rate'):
+            bracket_json.update({ 'rates': transform_values_history(bracket.rate) })
+        brackets.append(bracket_json)
 
-    dates = set(sum(
-        [bracket['thresholds'].keys() + bracket['rates'].keys() for bracket in brackets],
-        []))  # flatten the dates and remove duplicates
+    log.debug(brackets)
+
+    #brackets = [{
+    #    'thresholds': transform_values_history(bracket.threshold),
+    #    # 'rates': transform_values_history(bracket.rate),
+    #   } for bracket in scale.brackets]
+    #log.debug(brackets)
+    #log.debug(type(brackets[0]['thresholds']))
+
+    if hasattr(bracket, 'rates'):
+        dates = set(sum(
+            [bracket['thresholds'].keys() + bracket['rates'].keys() for bracket in brackets],
+            []))  # flatten the dates and remove duplicates
+    else:
+        dates = set(sum(
+            [bracket['thresholds'].keys() for bracket in brackets],
+            []))  # flatten the dates and remove duplicates
 
     # We iterate on all dates as we need to build the whole scale for each of them
     brackets_transformed = {}
@@ -41,9 +62,10 @@ def transform_scale(scale):
         for bracket in brackets:
             threshold_value = get_value(date, bracket['thresholds'])
             if threshold_value is not None:
-                rate_value = get_value(date, bracket['rates'])
                 brackets_transformed[date] = brackets_transformed.get(date) or {}
-                brackets_transformed[date][threshold_value] = rate_value
+                if hasattr(bracket, 'rates'):
+                    rate_value = get_value(date, bracket['rates'])
+                    brackets_transformed[date][threshold_value] = rate_value
 
     # Handle stopped parameters: a parameter is stopped if its first bracket is stopped
     latest_date_first_threshold = max(brackets[0]['thresholds'].keys())
@@ -59,8 +81,11 @@ def walk_node(node, parameters, path_fragments):
 
     for child_name, child in children.items():
         if isinstance(child, ParameterNode):
+            log.debug(path_fragments + [child_name])
             walk_node(child, parameters, path_fragments + [child_name])
+
         else:
+            log.debug(child_name)
             object_transformed = {
                 'description': getattr(child, "description", None),
                 'id': u'.'.join(path_fragments + [child_name]),
