@@ -36,25 +36,21 @@ def transform_scale(scale):
         bracket_json = { 'thresholds': transform_values_history(bracket.threshold) }
         if hasattr(bracket, 'rate'):
             bracket_json.update({ 'rates': transform_values_history(bracket.rate) })
+        if hasattr(bracket, 'amount'):
+            bracket_json.update({ 'amounts': transform_values_history(bracket.amount) })
         brackets.append(bracket_json)
-
-    log.debug(brackets)
 
     #brackets = [{
     #    'thresholds': transform_values_history(bracket.threshold),
     #    # 'rates': transform_values_history(bracket.rate),
     #   } for bracket in scale.brackets]
-    #log.debug(brackets)
-    #log.debug(type(brackets[0]['thresholds']))
 
-    if hasattr(bracket, 'rates'):
-        dates = set(sum(
-            [bracket['thresholds'].keys() + bracket['rates'].keys() for bracket in brackets],
-            []))  # flatten the dates and remove duplicates
-    else:
-        dates = set(sum(
-            [bracket['thresholds'].keys() for bracket in brackets],
-            []))  # flatten the dates and remove duplicates
+    dates = set(sum(
+        [ bracket['thresholds'].keys()
+         + ( bracket['rates'].keys() if hasattr(bracket, 'rates') else [] )
+         + ( bracket['amounts'].keys() if hasattr(bracket, 'amounts') else [] )
+         for bracket in brackets],
+        []))  # flatten the dates and remove duplicates
 
     # We iterate on all dates as we need to build the whole scale for each of them
     brackets_transformed = {}
@@ -66,6 +62,9 @@ def transform_scale(scale):
                 if hasattr(bracket, 'rates'):
                     rate_value = get_value(date, bracket['rates'])
                     brackets_transformed[date][threshold_value] = rate_value
+                if hasattr(bracket, 'amounts'):
+                    amount_value = get_value(date, bracket['amounts'])
+                    brackets_transformed[date][threshold_value] = amount_value
 
     # Handle stopped parameters: a parameter is stopped if its first bracket is stopped
     latest_date_first_threshold = max(brackets[0]['thresholds'].keys())
