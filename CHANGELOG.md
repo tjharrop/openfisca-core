@@ -1,14 +1,18 @@
 # Changelog
 
+### 21.3.4 [#616](https://github.com/openfisca/openfisca-core/pull/618)
+
+- Describe `/spec` endpoint in OpenAPI documentation available at `/spec`
+
 ### 21.3.3 [#608](https://github.com/openfisca/openfisca-core/pull/608)
 
 - Improve API response time
 
-## 21.3.2 [#617](https://github.com/openfisca/openfisca-core/pull/611)
+### 21.3.2 [#617](https://github.com/openfisca/openfisca-core/pull/611)
 
 - Make decompositions more robust
 
-## 21.3.1 [#617](https://github.com/openfisca/openfisca-core/pull/617)
+### 21.3.1 [#617](https://github.com/openfisca/openfisca-core/pull/617)
 
 - Fix bug on API `/variable/{id}`
   - Encode API `/variable/{id}` output to `utf-8`
@@ -23,7 +27,7 @@ Add `--only-variables` and `--ignore-variables` options to `openfisca-run-test` 
 - When a variable file is loaded twice in the same python interpreter, make sure the second loading doesn't corrupt the first one.
     - This fixes a bug introduced in 21.0.2, which could lead to a corruption of the tax and benefit in rare edge cases
 
-## 21.2.1 [#613](https://github.com/openfisca/openfisca-core/pull/613)
+### 21.2.1 [#613](https://github.com/openfisca/openfisca-core/pull/613)
 
 - Fix two bugs that appeared with 21.2.0:
   - Properly encode the result of a formula returning an Enum value
@@ -79,7 +83,7 @@ config = MemoryConfig(
 
 - Deprecate `requested_period_added_value` base function, as it had no effect.
 
-# 21.0.3 [#595](https://github.com/openfisca/openfisca-core/pull/595)
+### 21.0.3 [#595](https://github.com/openfisca/openfisca-core/pull/595)
 
 #### Bug fix
 
