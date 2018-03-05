@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import cProfile
 import logging
-import sys
 import os
+import sys
+import time
+import tempfile
 
 from openfisca_core.tools.test_runner import run_tests
 from openfisca_core.scripts import add_tax_benefit_system_arguments, build_tax_benefit_system
@@ -22,6 +25,10 @@ def build_parser():
 
 
 def main():
+    start_time = time.time()
+    profile = cProfile.Profile()
+    profile.enable()
+
     parser = build_parser()
     args = parser.parse_args()
     logging.basicConfig(level = logging.DEBUG if args.verbose else logging.WARNING, stream = sys.stdout)
@@ -37,6 +44,10 @@ def main():
 
     paths = map(os.path.abspath, args.path)
     tests_ok = run_tests(tax_benefit_system, paths, options)
+
+    tf = tempfile.NamedTemporaryFile(delete = False)
+    print("http://127.0.0.1:8080/snakeviz/" + tf.name)
+    profile.dump_stats(tf.name)
 
     if not tests_ok:
         sys.exit(1)
