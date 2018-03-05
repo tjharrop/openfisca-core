@@ -148,7 +148,7 @@ class Parameter(object):
 
     def __repr__(self):
         return os.linesep.join([
-            '{}: {}'.format(value.instant_str, value.value) for value in self.values_list
+            '{}: {}'.format(value.instant_str, value.value if value.value is not None else 'null') for value in self.values_list
             ])
 
     def __eq__(self, other):
@@ -380,6 +380,11 @@ class ParameterNode(object):
             raise TypeError("child must be of type ParameterNode, Parameter, or Scale. Instead got {}".format(type(child)).encode('utf-8'))
         self.children[name] = child
         setattr(self, name, child)
+
+    def save(self, file_path):
+        with open(file_path, 'w') as f:
+            f.write(repr(self))
+            f.write('\n')
 
     def __repr__(self):
         return os.linesep.join(
@@ -674,8 +679,8 @@ class Scale(object):
             raise KeyError(key)
 
     def __repr__(self):
-        return os.linesep.join([
-            '-' + indent(repr(bracket))[1:]
+        return os.linesep.join(['brackets:'] + [
+            '  -' + indent(indent(repr(bracket)))[3:]
             for bracket in self.brackets
             ])
 
