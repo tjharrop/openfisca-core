@@ -20,6 +20,6 @@ test:
     - ./check-version-bump.sh
 deployment:
   test-release:
-    branch: master
+    branch: test-release
     commands:
       - ./deploy-if-version-bump.sh
