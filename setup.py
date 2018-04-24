@@ -60,4 +60,5 @@ setup(
         },
     packages = find_packages(exclude=['tests*']),
     test_suite = 'nose.collector',
+    scripts = ['openfisca_core/scripts/openfisca_serve']
     )
