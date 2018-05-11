@@ -337,15 +337,12 @@ class Simulation(object):
         Return a boolean telling if the current variable has already been called without being allowed by
         the parameter max_nb_cycles of the calculate method.
         """
+        #print('{}<{}>'.format(variable.name, period))
         def get_error_message():
-            return u'Circular definition detected on formula {}<{}>. Formulas and periods involved: {}.'.format(
+            return u'Circular definition detected on formula {}<{}>. Backtrace: \n- {}'.format(
                 variable.name,
                 period,
-                u', '.join(sorted(set(
-                    u'{}<{}>'.format(variable_name, period2)
-                    for variable_name, periods in requested_periods_by_variable_name.iteritems()
-                    for period2 in periods
-                    ))).encode('utf-8'),
+                u'\n- '.join(self.tracer.stack)
                 )
         requested_periods_by_variable_name = self.requested_periods_by_variable_name
         variable_name = variable.name
@@ -357,7 +354,7 @@ class Simulation(object):
             if self.max_nb_cycles is None or len(requested_periods) > self.max_nb_cycles:
                 message = get_error_message()
                 if self.max_nb_cycles is None:
-                    message += ' Hint: use "max_nb_cycles = 0" to get a default value, or "= N" to allow N cycles.'
+                    message += '\nHint: use "max_nb_cycles = 0" to get a default value, or "= N" to allow N cycles.'
                 raise CycleError(message)
             else:
                 requested_periods.append(period)

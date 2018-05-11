@@ -200,7 +200,9 @@ class Tracer(object):
         """
         key = self._get_key(variable_name, period, extra_params = extra_params)
 
+
         def _print_details(key, depth):
+            print(self.trace[key])
             if depth > 0 and ignore_zero and np.all(self.trace[key]['value'] == 0):
                 return
             self._print_node(key, depth, aggregate)
