@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from openfisca_web_api_preview.scripts.serve import define_command_line_options, main as serve
+from openfisca_web_api.scripts.serve import define_command_line_options, main as serve
 
 
 """

@@ -9,7 +9,7 @@ from gunicorn.six import iteritems
 from gunicorn import config
 
 from openfisca_core.scripts import add_tax_benefit_system_arguments, build_tax_benefit_system
-from openfisca_web_api_preview.app import create_app
+from openfisca_web_api.app import create_app
 
 
 """

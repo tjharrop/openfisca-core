@@ -11,7 +11,7 @@ import dpath
 from openfisca_core.simulations import Simulation, SituationParsingError
 from openfisca_core.commons import to_unicode
 from openfisca_core.indexed_enums import Enum
-from openfisca_web_api_preview.loader import build_data
+from openfisca_web_api.loader import build_data
 import traceback
 import logging
 
