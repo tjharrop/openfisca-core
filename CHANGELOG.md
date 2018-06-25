@@ -1,5 +1,16 @@
 # Changelog
 
+### 23.1.5 [#681](https://github.com/openfisca/openfisca-core/pull/681)
+
+* Expose Parameters metadata in the Python API
+    - Parameters unit and reference:
+      - e.g. `parameters.taxes.rate.unit`, `parameters.taxes.rate.reference`
+    - Parameter value unit and reference:
+      - e.g. `parameters.taxes.rate.values_list[0].unit`, `parameters.taxes.rate.values_list[0].reference`
+    - Parameter node description and reference:
+      - e.g. `parameters.taxes.reference`, `parameters.taxes.description`
+      - Note: Parameter descriptions (e.g. `parameters.taxes.rate.description`) were already exposed
+
 ### 23.1.4 [#679](https://github.com/openfisca/openfisca-core/pull/679)
 
 * Use C binding to load and dump Yaml (`CLoader` and `CDumper`)
