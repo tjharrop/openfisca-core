@@ -348,11 +348,11 @@ class ParameterNode(object):
                         node_metadata = _load_yaml_file(child_path)
                         self.reference = node_metadata.get('reference', None)
                         self.description = node_metadata.get('description', None)
-
-                    child_name_expanded = _compose_name(name, child_name)
-                    child = load_parameter_file(child_path, child_name_expanded)
-                    self.children[child_name] = child
-                    setattr(self, child_name, child)
+                    else:
+                        child_name_expanded = _compose_name(name, child_name)
+                        child = load_parameter_file(child_path, child_name_expanded)
+                        self.children[child_name] = child
+                        setattr(self, child_name, child)
 
                 elif os.path.isdir(child_path):
                     child_name = os.path.basename(child_path)
