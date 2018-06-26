@@ -7,9 +7,12 @@
       - e.g. `parameters.taxes.rate.unit`, `parameters.taxes.rate.reference`
     - Parameter value unit and reference:
       - e.g. `parameters.taxes.rate.values_list[0].unit`, `parameters.taxes.rate.values_list[0].reference`
+      - Note: the unit of a parameter value is by default the unit defined at the parameter level, but it can be overridden, for instance for currency change.
     - Parameter node description and reference:
       - e.g. `parameters.taxes.reference`, `parameters.taxes.description`
       - Note: Parameter descriptions (e.g. `parameters.taxes.rate.description`) were already exposed
+* Expose Parameters metadata in the Web API
+  - Only parameters unit and reference for the moment
 
 ### 23.1.4 [#679](https://github.com/openfisca/openfisca-core/pull/679)
 
