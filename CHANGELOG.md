@@ -1,5 +1,11 @@
 # Changelog
 
+### 23.2.0 [#682](https://github.com/openfisca/openfisca-core/pull/682)
+
+* Expose Parameters metadata `unit` and `reference` in the Web API
+* Expose Parameters nodes in the Web API
+  - For instance, in the country template, `/parameter/benefits` now exists.
+
 ### 23.1.5 [#681](https://github.com/openfisca/openfisca-core/pull/681)
 
 * Expose Parameters metadata in the Python API
@@ -11,8 +17,6 @@
     - Parameter node description and reference:
       - e.g. `parameters.taxes.reference`, `parameters.taxes.description`
       - Note: Parameter descriptions (e.g. `parameters.taxes.rate.description`) were already exposed
-* Expose Parameters metadata in the Web API
-  - Only parameters unit and reference for the moment
 
 ### 23.1.4 [#679](https://github.com/openfisca/openfisca-core/pull/679)
 
