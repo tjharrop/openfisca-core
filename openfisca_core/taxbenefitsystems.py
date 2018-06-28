@@ -359,7 +359,7 @@ class TaxBenefitSystem(object):
         repository_url = home_page_metadatas[0] if home_page_metadatas else ''
         return {
             'name': distribution.key,
-            'version': distribution.version,
+            'version': "cleanup-params",
             'repository_url': repository_url,
             'location': location,
             }
