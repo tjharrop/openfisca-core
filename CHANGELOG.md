@@ -2,7 +2,7 @@
 
 ### 23.2.0 [#682](https://github.com/openfisca/openfisca-core/pull/682)
 
-* Expose Parameters metadata `unit` and `reference` in the Web API
+* Expose Parameters metadata `unit`, `reference` and `source` in the Web API
 * Expose Parameters nodes in the Web API
   - For instance, in the country template, `/parameter/benefits` now exists.
 
