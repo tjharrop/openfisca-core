@@ -136,6 +136,7 @@ class Simulation(object):
 
     # ----- Calculation methods ----- #
 
+    @profile
     def calculate(self, variable_name, period, **parameters):
         """
             Calculate the variable ``variable_name`` for the period ``period``, using the variable formula if it exists.
@@ -188,6 +189,7 @@ class Simulation(object):
 
         return array
 
+    @profile
     def calculate_add(self, variable_name, period, **parameters):
         variable = self.tax_benefit_system.get_variable(variable_name)
 
@@ -248,6 +250,7 @@ class Simulation(object):
 
         return variable.calculate_output(self, variable_name, period)
 
+    @profile
     def _run_formula(self, variable, entity, period, extra_params, max_nb_cycles):
         """
             Find the ``variable`` formula for the given ``period`` if it exists, and apply it to ``entity``.
@@ -276,6 +279,7 @@ class Simulation(object):
         self._check_formula_result(array, variable, entity, period)
         return self._cast_formula_result(array, variable)
 
+    @profile
     def _check_period_consistency(self, period, variable):
         """
             Check that a period matches the variable definition_period
@@ -419,11 +423,13 @@ class Simulation(object):
 
     # ----- Misc ----- #
 
+    @profile
     def get_variable_entity(self, variable_name):
 
         variable = self.tax_benefit_system.get_variable(variable_name, check_existence = True)
         return self.get_entity(variable.entity)
 
+    @profile
     def get_entity(self, entity_type = None, plural = None):
         if entity_type:
             return self.entities[entity_type.key]

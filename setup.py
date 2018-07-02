@@ -42,6 +42,7 @@ setup(
     include_package_data = True,  # Will read MANIFEST.in
     install_requires = [
         'Biryani[datetimeconv] >= 0.10.8',
+        'boltons >= 18.0.0',
         'dpath == 1.4.0',
         'enum34 >= 1.1.6',
         'future',

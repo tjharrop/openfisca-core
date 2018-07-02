@@ -264,6 +264,7 @@ class TaxBenefitSystem(object):
 
         return reform(self)
 
+    @profile
     def get_variable(self, variable_name, check_existence = False):
         """
         Get a variable from the tax and benefit system.

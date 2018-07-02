@@ -410,6 +410,7 @@ class Period(tuple):
             (intersection_stop.date - intersection_start.date).days + 1,
             ))
 
+    @profile
     def get_subperiods(self, unit):
         """
             Return the list of all the periods of unit ``unit`` contained in self.
@@ -429,6 +430,7 @@ class Period(tuple):
 
         return [self.first_month.offset(i, MONTH) for i in range(self.size_in_months)]
 
+    @profile
     def offset(self, offset, unit = None):
         """Increment (or decrement) the given period with offset units.
 

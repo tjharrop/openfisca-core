@@ -75,6 +75,7 @@ class Holder(object):
         if self._disk_storage:
             self._disk_storage.delete(period)
 
+    @profile
     def get_array(self, period, extra_params = None):
         """
             Get the value of the variable for the given period (and possibly a list of extra parameters).
@@ -223,9 +224,9 @@ class Holder(object):
             )
 
         if should_store_on_disk:
-            self._disk_storage.put(value, period, extra_params)
+            self._disk_storage.put(period, value, extra_params)
         else:
-            self._memory_storage.put(value, period, extra_params)
+            self._memory_storage.put(period, value, extra_params)
 
     def put_in_cache(self, value, period, extra_params = None):
         if self._do_not_store:
