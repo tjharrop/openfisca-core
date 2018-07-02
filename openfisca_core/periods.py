@@ -15,6 +15,7 @@ import collections
 import datetime
 import re
 from os import linesep
+from functools import wraps
 
 from openfisca_core import conv
 from openfisca_core.commons import unicode_type, basestring_type, to_unicode
@@ -410,7 +411,7 @@ class Period(tuple):
             (intersection_stop.date - intersection_start.date).days + 1,
             ))
 
-    @profile
+    # @profile
     def get_subperiods(self, unit):
         """
             Return the list of all the periods of unit ``unit`` contained in self.
@@ -430,7 +431,7 @@ class Period(tuple):
 
         return [self.first_month.offset(i, MONTH) for i in range(self.size_in_months)]
 
-    @profile
+    # @profile
     def offset(self, offset, unit = None):
         """Increment (or decrement) the given period with offset units.
 
@@ -585,6 +586,7 @@ class Period(tuple):
         return self[2]
 
     @property
+    # @profile
     def size_in_months(self):
         """Return the size of the period in months.
 
@@ -599,6 +601,7 @@ class Period(tuple):
             return self[2] * 12
 
     @property
+    # @profile
     def start(self):
         """Return the first day of the period as an Instant instance.
 
@@ -709,6 +712,7 @@ class Period(tuple):
         return self.start.offset('first-of', 'year').period('year')
 
     @property
+    # @profile
     def first_month(self):
         return self.start.offset('first-of', 'month').period('month')
 
@@ -770,6 +774,7 @@ def instant_date(instant):
     return instant_date
 
 
+# @profile
 def period(value):
     """Return a new period, aka a triple (unit, start_instant, size).
 
@@ -1097,3 +1102,19 @@ def json_or_python_to_instant_tuple(value, state = None):
         instant = value
 
     return instant, None
+
+def periodify(get_period=period, eternity=ETERNITY):
+    def decorator(fun):
+        @wraps(fun)
+        def period(self, period, *args, **kwargs):
+            if period is None:
+                pass
+            if not self.is_eternal:
+                period = get_period(period)
+            else:
+                period = get_period(eternity)
+
+            return fun(self, period, *args, **kwargs)
+        return period
+    return decorator
+

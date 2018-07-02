@@ -198,7 +198,7 @@ When you request the computation of a variable within a formula, you must always
 See more information at <http://openfisca.org/doc/coding-the-legislation/35_periods.html#periods-for-variable>.
 '''.format(variable_name, filename, line_number, line_of_code).encode('utf-8'))
 
-    @profile
+    # @profile
     def __call__(self, variable_name, period = None, options = [], **parameters):
         """
             Calculate the variable ``variable_name`` for the entity and the period ``period``, using the variable formula if it exists.
@@ -233,7 +233,7 @@ See more information at <http://openfisca.org/doc/coding-the-legislation/35_peri
             warnings.simplefilter("ignore")
             return np.full(self.count, value, dtype)
 
-    @profile
+    # @profile
     def get_holder(self, variable_name):
         self.check_variable_defined_for_entity(variable_name)
         holder = self._holders.get(variable_name)

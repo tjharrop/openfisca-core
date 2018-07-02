@@ -143,7 +143,6 @@ class Variable(object):
            Free text field describing the unit of the variable. Only used as metadata.
     """
 
-    @profile
     def __init__(self, baseline_variable = None):
         self.name = to_unicode(self.__class__.__name__)
         attr = {
@@ -187,7 +186,6 @@ class Variable(object):
 
     # ----- Setters used to build the variable ----- #
 
-    @profile
     def set(self, attributes, attribute_name, required = False, allowed_values = None, allowed_type = None, setter = None, default = None):
         value = attributes.pop(attribute_name, None)
         if value is None and self.baseline_variable:
@@ -278,7 +276,6 @@ class Variable(object):
             return self.baseline_variable.calculate_output
         return calculate_output
 
-    @profile
     def set_formulas(self, formulas_attr):
         formulas = SortedDict()
         for formula_name, formula in formulas_attr.items():

@@ -187,6 +187,7 @@ class MarginalRateTaxScale(AbstractRateTaxScale):
                 self.combine_bracket(rate, threshold_low, threshold_high)
             self.combine_bracket(tax_scale.rates[-1], tax_scale.thresholds[-1])  # Pour traiter le dernier threshold
 
+    @profile
     def calc(self, base, factor = 1, round_base_decimals = None):
         base1 = np.tile(base, (len(self.thresholds), 1)).T
         if isinstance(factor, (float, int)):

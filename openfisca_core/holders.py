@@ -75,7 +75,7 @@ class Holder(object):
         if self._disk_storage:
             self._disk_storage.delete(period)
 
-    @profile
+    # @profile
     def get_array(self, period, extra_params = None):
         """
             Get the value of the variable for the given period (and possibly a list of extra parameters).

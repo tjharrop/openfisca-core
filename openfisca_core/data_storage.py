@@ -5,26 +5,8 @@ import os
 
 import numpy as np
 
-from functools import wraps
-from openfisca_core import periods
-from openfisca_core.periods import ETERNITY
+from openfisca_core.periods import periodify
 from openfisca_core.indexed_enums import EnumArray
-
-
-def periodify(get_period, eternity):
-    def decorator(fun):
-        @wraps(fun)
-        def wrapper(self, period, *args, **kwargs):
-            if period is None:
-                pass
-            if not self.is_eternal:
-                period = get_period(period)
-            else:
-                period = get_period(eternity)
-
-            return fun(self, period, *args, **kwargs)
-        return wrapper
-    return decorator
 
 
 class InMemoryStorage(object):
@@ -33,13 +15,12 @@ class InMemoryStorage(object):
     in memory
     """
 
-    @profile
     def __init__(self, is_eternal=False):
         self._arrays = {}
         self.is_eternal = is_eternal
 
-    @profile
-    @periodify(periods.period, ETERNITY)
+    # @profile
+    @periodify()
     def get(self, period, extra_params=None):
         values = self._arrays.get(period)
 
@@ -51,8 +32,8 @@ class InMemoryStorage(object):
             return next(iter(values.values()))
         return values
 
-    @profile
-    @periodify(periods.period, ETERNITY)
+    # @profile
+    @periodify()
     def put(self, period, value, extra_params=None):
         if not extra_params:
             self._arrays[period] = value
@@ -61,7 +42,7 @@ class InMemoryStorage(object):
                 self._arrays[period] = {}
             self._arrays[period][tuple(extra_params)] = value
 
-    @periodify(periods.period, ETERNITY)
+    @periodify()
     def delete(self, period=None):
         if period is None:
             self._arrays = {}
@@ -112,7 +93,7 @@ class OnDiskStorage(object):
         else:
             return np.load(file)
 
-    @periodify(periods.period, ETERNITY)
+    @periodify()
     def get(self, period, extra_params=None):
         values = self._files.get(period)
 
@@ -126,7 +107,7 @@ class OnDiskStorage(object):
             return self._decode_file(next(iter(values.values())))
         return self._decode_file(values)
 
-    @periodify(periods.period, ETERNITY)
+    @periodify()
     def put(self, period, value, extra_params=None):
         filename = str(period)
 
@@ -148,7 +129,7 @@ class OnDiskStorage(object):
                 self._files[period] = {}
             self._files[period][tuple(extra_params)] = path
 
-    @periodify(periods.period, ETERNITY)
+    @periodify()
     def delete(self, period=None):
         if period is None:
             self._files = {}
