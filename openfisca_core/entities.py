@@ -846,6 +846,7 @@ def get_projector_from_shortcut(entity, shortcut, parent = None):
     else:
         if shortcut == 'first_person':
             return FirstPersonToEntityProjector(entity, parent)
+
         role = next((role for role in entity.flattened_roles if (role.max == 1) and (role.key == shortcut)), None)
         if role:
             return UniqueRoleToEntityProjector(entity, role, parent)

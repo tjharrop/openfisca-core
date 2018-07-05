@@ -208,10 +208,10 @@ class Simulation(object):
                 variable.name,
                 period).encode('utf-8'))
 
-        return sum(
+        return np.sum(
             self.calculate(variable_name, sub_period, **parameters)
-            for sub_period in period.get_subperiods(variable.definition_period)
-            )
+            for sub_period
+            in period.get_subperiods(variable.definition_period))
 
     def calculate_divide(self, variable_name, period, **parameters):
         variable = self.tax_benefit_system.get_variable(variable_name)

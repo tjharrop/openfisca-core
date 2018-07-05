@@ -202,7 +202,7 @@ class MarginalRateTaxScale(AbstractRateTaxScale):
         else:
             r = np.tile(self.rates, (len(base), 1))
             b = np.round(a, round_base_decimals)
-            return np.round(r * b, round_base_decimals).sum(axis = 1)
+            return np.add.reduce(np.round(r * b, round_base_decimals), axis=1)
 
     def combine_bracket(self, rate, threshold_low = 0, threshold_high = False):
         # Insert threshold_low and threshold_high without modifying rates

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from copy import deepcopy
+import numpy as np
 
 from openfisca_core.columns import make_column_from_variable
 from openfisca_core import conv

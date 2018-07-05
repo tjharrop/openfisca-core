@@ -10,9 +10,9 @@ from openfisca_core.columns import make_column_from_variable
 from openfisca_core.commons import basestring_type
 
 
+@profile
 def calculate(simulations, decomposition_json):
 
-    @profile
     def new_test_case_array(holder, array):
         entity_step_size = holder.entity.step_size
         return array.reshape([holder.simulation.steps_count, entity_step_size]).sum(1)
