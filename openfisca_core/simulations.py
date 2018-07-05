@@ -189,7 +189,7 @@ class Simulation(object):
 
         return array
 
-    # @profile
+    @profile
     def calculate_add(self, variable_name, period, **parameters):
         variable = self.tax_benefit_system.get_variable(variable_name)
 
@@ -279,7 +279,7 @@ class Simulation(object):
         self._check_formula_result(array, variable, entity, period)
         return self._cast_formula_result(array, variable)
 
-    @profile
+    # @profile
     def _check_period_consistency(self, period, variable):
         """
             Check that a period matches the variable definition_period

@@ -56,6 +56,7 @@ class InMemoryStorage(object):
     def get_known_periods(self):
         return self._arrays.keys()
 
+    @profile
     def get_memory_usage(self):
         if not self._arrays:
             return dict(nb_arrays=0,

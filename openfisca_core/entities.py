@@ -167,7 +167,7 @@ class Entity(object):
 
     # Calculations
 
-    @profile
+    # @profile
     def check_variable_defined_for_entity(self, variable_name):
         variable_entity = self.simulation.tax_benefit_system.get_variable(variable_name, check_existence = True).entity
         if not isinstance(self, variable_entity):
@@ -246,6 +246,7 @@ See more information at <http://openfisca.org/doc/coding-the-legislation/35_peri
             )
         return holder
 
+    @profile
     def get_memory_usage(self, variables = None):
         holders_memory_usage = {
             variable_name: holder.get_memory_usage()
@@ -499,6 +500,7 @@ class GroupEntity(Entity):
 
     #  Aggregation persons -> entity
 
+    @profile
     @projectable
     def sum(self, array, role = None):
         """
@@ -525,6 +527,7 @@ class GroupEntity(Entity):
         else:
             return np.bincount(self.members_entity_id, weights = array)
 
+    @profile
     @projectable
     def any(self, array, role = None):
         """
@@ -615,6 +618,7 @@ class GroupEntity(Entity):
         """
         return self.reduce(array, reducer = np.minimum, neutral_element = np.infty, role = role)
 
+    @profile
     @projectable
     def nb_persons(self, role = None):
         """
@@ -809,6 +813,7 @@ class UniqueRoleToEntityProjector(Projector):
         return self.target_entity.value_from_person(result, self.role)
 
 
+@profile
 def build_entity(key, plural, label, doc = "", roles = None, is_person = False):
     entity_class_name = key.title()
     attributes = {'key': key, 'plural': plural, 'label': label, 'doc': textwrap.dedent(doc), 'roles_description': roles}

@@ -24,6 +24,7 @@ def get_value(date, values):
         return None
 
 
+@profile
 def transform_scale(scale):
     # preprocess brackets
     brackets = [{

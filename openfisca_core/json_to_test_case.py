@@ -138,7 +138,7 @@ def check_entities_consistency(test_case, tax_benefit_system, state):
 
     return test_case, error, remaining_persons
 
-
+@profile
 def check_each_person_has_entities(test_case, tax_benefit_system, state):
     groupless_persons = check_entities_consistency(test_case, tax_benefit_system, state)[2]
     groupless_persons_ids = sum(groupless_persons.values(), [])  # all the persons who are missing an entity
