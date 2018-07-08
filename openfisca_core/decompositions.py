@@ -10,7 +10,6 @@ from openfisca_core.columns import make_column_from_variable
 from openfisca_core.commons import basestring_type
 
 
-@profile
 def calculate(simulations, decomposition_json):
 
     def new_test_case_array(holder, array):

@@ -136,7 +136,7 @@ class Simulation(object):
 
     # ----- Calculation methods ----- #
 
-    # @profile
+    @profile
     def calculate(self, variable_name, period, **parameters):
         """
             Calculate the variable ``variable_name`` for the period ``period``, using the variable formula if it exists.
@@ -208,10 +208,10 @@ class Simulation(object):
                 variable.name,
                 period).encode('utf-8'))
 
-        return np.sum(
+        return sum(
             self.calculate(variable_name, sub_period, **parameters)
-            for sub_period
-            in period.get_subperiods(variable.definition_period))
+            for sub_period in period.get_subperiods(variable.definition_period)
+            )
 
     def calculate_divide(self, variable_name, period, **parameters):
         variable = self.tax_benefit_system.get_variable(variable_name)
