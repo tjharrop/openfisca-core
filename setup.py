@@ -49,7 +49,6 @@ setup(
         'flask == 0.12',
         'flask-cors == 3.0.2',
         'gunicorn >= 19.7.1',
-        'numba == 0.38.0',
         'numpy >= 1.11, < 1.15',
         'psutil == 5.4.6',
         'PyYAML >= 3.10',

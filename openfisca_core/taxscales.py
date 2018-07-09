@@ -9,7 +9,6 @@ import logging
 import itertools
 import os
 
-import numba
 import numpy as np
 from numpy import maximum as max_, minimum as min_
 
@@ -17,51 +16,6 @@ from openfisca_core.commons import empty_clone
 from openfisca_core.tools import indent
 
 log = logging.getLogger(__name__)
-
-
-@numba.jit(nopython=False)
-def _tile(rates, shape):
-    return np.tile(rates, shape)
-
-
-@numba.jit(nopython=True)
-def _T(tile):
-    return tile.T
-
-
-@numba.jit(nopython=False)
-def _threshold1a(thresholds, inf=[np.inf]):
-    return np.array(thresholds + inf)
-
-
-@numba.jit(nopython=True)
-def _threshold1b(factor, thresholds, eps=np.finfo(np.float).eps):
-    return np.outer(factor + eps, thresholds)
-
-
-@numba.jit(nopython=False)
-def _round(thresholds, round_base_decimals):
-    return np.round(thresholds, round_base_decimals)
-
-
-@numba.jit(nopython=True)
-def _max_min(base, thresholds):
-    return np.maximum(np.minimum(base, thresholds[:, 1:]) - thresholds[:, :-1], 0)
-
-
-@numba.jit(nopython=True)
-def _shape(base):
-    return (len(base), 1)
-
-
-@numba.jit(nopython=True)
-def _multiply(a, b):
-    return a * b
-
-
-@numba.jit(nopython=True)
-def _sum(rounded):
-    return rounded.sum(axis=1)
 
 
 class AbstractTaxScale(object):
@@ -185,7 +139,7 @@ class AmountTaxScale(AbstractTaxScale):
             self.thresholds.insert(i, threshold)
             self.amounts.insert(i, amount)
 
-    # @profile
+    @profile
     def calc(self, base):
         base1 = np.tile(base, (len(self.thresholds), 1)).T
         thresholds1 = np.tile(np.hstack((self.thresholds, np.inf)), (len(base), 1))
@@ -194,7 +148,7 @@ class AmountTaxScale(AbstractTaxScale):
 
 
 class LinearAverageRateTaxScale(AbstractRateTaxScale):
-    # @profile
+    @profile
     def calc(self, base):
         if len(self.rates) == 1:
             return base * self.rates[0]
@@ -237,20 +191,20 @@ class MarginalRateTaxScale(AbstractRateTaxScale):
 
     @profile
     def calc(self, base, factor = 1, round_base_decimals = None):
-        base1 = _T(_tile(base, _shape(self.thresholds)))
+        base1 = np.tile(base, (len(self.thresholds), 1)).T
         if isinstance(factor, (float, int)):
             factor = np.ones(len(base)) * factor
         # np.finfo(np.float).eps is used to avoid np.nan = 0 * np.inf creation
-        thresholds1 = _threshold1b(factor, _threshold1a(self.thresholds))
+        thresholds1 = np.outer(factor + np.finfo(np.float).eps, np.array(self.thresholds + [np.inf]))
         if round_base_decimals is not None:
-            thresholds1 = _round(thresholds1, round_base_decimals)
-        a = _max_min(base1, thresholds1)
+            thresholds1 = np.round(thresholds1, round_base_decimals)
+        a = max_(min_(base1, thresholds1[:, 1:]) - thresholds1[:, :-1], 0)
         if round_base_decimals is None:
             return np.dot(self.rates, a.T)
         else:
-            r = _tile(self.rates, _shape(base))
-            b = _round(a, round_base_decimals)
-            return _sum(_round(_multiply(r, b), round_base_decimals))
+            r = np.tile(self.rates, (len(base), 1))
+            b = np.round(a, round_base_decimals)
+            return np.round(r * b, round_base_decimals).sum(axis = 1)
 
     def combine_bracket(self, rate, threshold_low = 0, threshold_high = False):
         # Insert threshold_low and threshold_high without modifying rates
