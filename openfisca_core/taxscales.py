@@ -139,7 +139,7 @@ class AmountTaxScale(AbstractTaxScale):
             self.thresholds.insert(i, threshold)
             self.amounts.insert(i, amount)
 
-    @profile
+    # @profile
     def calc(self, base):
         base1 = np.tile(base, (len(self.thresholds), 1)).T
         thresholds1 = np.tile(np.hstack((self.thresholds, np.inf)), (len(base), 1))
@@ -148,7 +148,7 @@ class AmountTaxScale(AbstractTaxScale):
 
 
 class LinearAverageRateTaxScale(AbstractRateTaxScale):
-    @profile
+    # @profile
     def calc(self, base):
         if len(self.rates) == 1:
             return base * self.rates[0]
@@ -189,7 +189,7 @@ class MarginalRateTaxScale(AbstractRateTaxScale):
                 self.combine_bracket(rate, threshold_low, threshold_high)
             self.combine_bracket(tax_scale.rates[-1], tax_scale.thresholds[-1])  # Pour traiter le dernier threshold
 
-    @profile
+    # @profile
     def calc(self, base, factor = 1, round_base_decimals = None):
         base1 = np.tile(base, (len(self.thresholds), 1)).T
         if isinstance(factor, (float, int)):

@@ -136,7 +136,7 @@ class Simulation(object):
 
     # ----- Calculation methods ----- #
 
-    @profile
+    # @profile
     def calculate(self, variable_name, period, **parameters):
         """
             Calculate the variable ``variable_name`` for the period ``period``, using the variable formula if it exists.
@@ -189,7 +189,7 @@ class Simulation(object):
 
         return array
 
-    @profile
+    # @profile
     def calculate_add(self, variable_name, period, **parameters):
         variable = self.tax_benefit_system.get_variable(variable_name)
 
