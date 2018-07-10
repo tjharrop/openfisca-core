@@ -661,7 +661,9 @@ class Scale(object):
                     amount = bracket.amount
                     threshold = bracket.threshold
                     scale.add_bracket(threshold, amount)
-        elif any('average_rate' in bracket._children for bracket in brackets):
+
+            return scale
+        if any('average_rate' in bracket._children for bracket in brackets):
             scale = taxscales.LinearAverageRateTaxScale()
 
             for bracket in brackets:
@@ -674,19 +676,19 @@ class Scale(object):
                     threshold = bracket.threshold
                     scale.add_bracket(threshold, average_rate * base)
             return scale
-        else:
-            scale = taxscales.MarginalRateTaxScale()
 
-            for bracket in brackets:
-                if 'base' in bracket._children:
-                    base = bracket.base
-                else:
-                    base = 1.
-                if 'rate' in bracket._children and 'threshold' in bracket._children:
-                    rate = bracket.rate
-                    threshold = bracket.threshold
-                    scale.add_bracket(threshold, rate * base)
-            return scale
+        scale = taxscales.MarginalRateTaxScale()
+
+        for bracket in brackets:
+            if 'base' in bracket._children:
+                base = bracket.base
+            else:
+                base = 1.
+            if 'rate' in bracket._children and 'threshold' in bracket._children:
+                rate = bracket.rate
+                threshold = bracket.threshold
+                scale.add_bracket(threshold, rate * base)
+        return scale
 
     def __getitem__(self, key):
         if isinstance(key, int) and key < len(self.brackets):
