@@ -5,6 +5,7 @@ import numpy as np
 
 from openfisca_core.taxscales import MarginalRateTaxScale, combine_tax_scales
 from openfisca_core.tools import assert_near
+from openfisca_core.parameters import ParameterNode, Scale
 
 
 def test_simple_linear_average_rate_tax_scale():
@@ -114,8 +115,6 @@ def test_inverse_scaled_marginal_tax_scale():
 
 
 def test_combine_tax_scales():
-    from openfisca_core.parameters import ParameterNode
-
     node = ParameterNode('baremes', data = {
         'health': {
             'brackets': [
@@ -146,6 +145,22 @@ def test_combine_tax_scales():
     assert_near(bareme.thresholds, [0, 2000, 3000])
     assert_near(bareme.rates, [0.07, 0.12, 0.14], 1e-13)
 
+
+def test_amount_scale():
+    bareme = Scale('baremes', data = {
+        'brackets': [
+            {
+                'amount': {'2015-01-01': 100},
+                'threshold': {'2015-01-01': 0}
+                },
+            {
+                'amount': {'2015-01-01': 200},
+                'threshold': {'2015-01-01': 2000}
+                },
+            ]
+        })(2015)
+    array = np.asarray([0, 2000, 2001, 3000])
+    assert_near(bareme.calc(array), [0, 100, 200, 200])
 
 if __name__ == '__main__':
     import logging

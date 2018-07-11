@@ -619,7 +619,7 @@ class Scale(object):
     """
     _allowed_keys = set(['brackets', 'description', 'unit', 'reference'])
 
-    def __init__(self, name, data, file_path):
+    def __init__(self, name, data, file_path = None):
         """
         :param name: name of the scale, eg "taxes.some_scale"
         :param data: Data loaded from a YAML file. In case of a reform, the data can also be created dynamically.
