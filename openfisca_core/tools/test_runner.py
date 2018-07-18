@@ -70,16 +70,12 @@ def generate_tests(tax_benefit_system, paths, options = {}):
 
     """
 
-    if isinstance(paths, str):
-        paths = [paths]
+    # Browse the paths and parse the file to harvest tests data
+    tests = _generate_tests(tax_benefit_system, paths, options)
 
-    for path in paths:
-        if os.path.isdir(path):
-            for test in _generate_tests_from_directory(tax_benefit_system, path, options):
-                yield test
-        else:
-            for test in _generate_tests_from_file(tax_benefit_system, path, options):
-                yield test
+    # Transforme them into executable nose tests
+    for nose_test in _nosify_tests(tests):
+        yield nose_test
 
 
 def run_tests(tax_benefit_system, paths, options = {}):
@@ -119,6 +115,19 @@ def run_tests(tax_benefit_system, paths, options = {}):
 
 # Internal methods
 
+def _generate_tests(tax_benefit_system, paths, options = {}):
+    if isinstance(paths, str):
+        paths = [paths]
+
+    for path in paths:
+        if os.path.isdir(path):
+            for test in _generate_tests_from_directory(tax_benefit_system, path, options):
+                yield test
+        else:
+            for test in _generate_tests_from_file(tax_benefit_system, path, options):
+                yield test
+
+
 def _generate_tests_from_file(tax_benefit_system, path_to_file, options):
     filename = os.path.splitext(os.path.basename(path_to_file))[0]
     name_filter = options.get('name_filter')
@@ -144,14 +153,7 @@ def _generate_tests_from_file(tax_benefit_system, path_to_file, options):
             period_str,
             )
 
-        def check():
-            try:
-                _run_test(period_str, test, verbose, only_variables, ignore_variables, options)
-            except Exception:
-                log.error(title)
-                raise
-
-        yield unittest.FunctionTestCase(check)
+        yield (period_str, test, verbose, only_variables, ignore_variables, options, title)
 
 
 def _generate_tests_from_directory(tax_benefit_system, path_to_dir, options):
@@ -215,6 +217,21 @@ def _parse_test_file(tax_benefit_system, yaml_path):
                 default_flow_style = False, indent = 2, width = 120)))
 
         yield yaml_path, test.get('name') or filename, to_unicode(test['scenario'].period), test
+
+
+def _nosify_tests(tests):
+    # This part of the code should be in charge of aggregating tests to vectiorialize them
+
+    for (period_str, test, verbose, only_variables, ignore_variables, options, title) in tests:
+
+        def check():
+            try:
+                _run_test(period_str, test, verbose, only_variables, ignore_variables, options)
+            except Exception:
+                log.error(title)
+                raise
+
+        yield unittest.FunctionTestCase(check)
 
 
 def _run_test(period_str, test, verbose = False, only_variables = None, ignore_variables = None, options = {}):
