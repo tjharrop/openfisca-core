@@ -220,7 +220,9 @@ def _parse_test_file(tax_benefit_system, yaml_path):
 
 
 def _nosify_tests(tests):
-    # This part of the code should be in charge of aggregating tests to vectiorialize them
+    # This function takes a generator of test data tuples, and generates noses tests
+    # Right now it just independently transforms each tuple into an executable nose test
+    # We should change this code so that it aggregates several tests into one simulation
 
     for (period_str, test, verbose, only_variables, ignore_variables, options, title) in tests:
 
