@@ -6,7 +6,6 @@ import os
 import numpy as np
 
 from openfisca_core import periods
-from openfisca_core.periods import period as Period
 from openfisca_core.periods import ETERNITY
 from openfisca_core.indexed_enums import EnumArray
 
@@ -16,9 +15,9 @@ class InMemoryStorage(object):
     Low-level class responsible for storing and retrieving calculated vectors in memory
     """
 
-    def __init__(self, is_eternal = False):
+    def __init__(self, period = None):
         self._arrays = {}
-        self.is_eternal = is_eternal
+        self.period = period
 
     def get(self, period, extra_params = None):
         period = self._get_period(period)
@@ -80,9 +79,7 @@ class InMemoryStorage(object):
             )
 
     def _get_period(self, period):
-        if self.is_eternal:
-            return Period(ETERNITY)
-        return Period(period)
+        return self.period if self.period else periods.period(period)
 
 
 class OnDiskStorage(object):

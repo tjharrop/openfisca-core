@@ -30,7 +30,10 @@ class Holder(object):
         self.variable = variable
         self.simulation = entity.simulation
         self.buffer = {}
-        self._memory_storage = InMemoryStorage(is_eternal = (self.variable.definition_period == ETERNITY))
+        self._memory_storage = InMemoryStorage()
+
+        if self.variable.definition_period == ETERNITY:
+            self._memory_storage.period = periods.period(ETERNITY)
 
         # By default, do not activate on-disk storage, or variable dropping
         self._disk_storage = None
