@@ -6,6 +6,7 @@ import os
 import numpy as np
 
 from openfisca_core import periods
+from openfisca_core.periods import period as Period
 from openfisca_core.periods import ETERNITY
 from openfisca_core.indexed_enums import EnumArray
 
@@ -20,11 +21,9 @@ class InMemoryStorage(object):
         self.is_eternal = is_eternal
 
     def get(self, period, extra_params = None):
-        if self.is_eternal:
-            period = periods.period(ETERNITY)
-        period = periods.period(period)
-
+        period = self._get_period(period)
         values = self._arrays.get(period)
+
         if values is None:
             return None
         if extra_params:
@@ -34,15 +33,12 @@ class InMemoryStorage(object):
         return values
 
     def put(self, value, period, extra_params = None):
-        if self.is_eternal:
-            period = periods.period(ETERNITY)
-        period = periods.period(period)
+        period = self._get_period(period)
 
         if not extra_params:
             self._arrays[period] = value
         else:
-            if self._arrays.get(period) is None:
-                self._arrays[period] = {}
+            self._arrays[period] = self._arrays.get(period) or {}
             self._arrays[period][tuple(extra_params)] = value
 
     def delete(self, period = None):
@@ -50,9 +46,7 @@ class InMemoryStorage(object):
             self._arrays = {}
             return
 
-        if self.is_eternal:
-            period = periods.period(ETERNITY)
-        period = periods.period(period)
+        period = self._get_period(period)
 
         self._arrays = {
             period_item: value
@@ -84,6 +78,11 @@ class InMemoryStorage(object):
             total_nb_bytes = array.nbytes * nb_arrays,
             cell_size = array.itemsize,
             )
+
+    def _get_period(self, period):
+        if self.is_eternal:
+            return Period(ETERNITY)
+        return Period(period)
 
 
 class OnDiskStorage(object):
