@@ -14,6 +14,19 @@ pip install sphinx-autobuild
 
 ## Usage
 
+### From reStructuredText to markdown
+
+To convert `.rst` files to `.md` files, you need to install [pandoc](http://pandoc.org/installing.html) on your system.
+
+Then, run:
+```sh
+pandoc your_file.rst -f rst -t markdown -o your_file.md
+```
+
+### From reStructuredText to `.html`
+
+Build `.html` documentation from `.rst` files and serve it on `<http://127.0.0.1:8000>`:
+
 ```sh
 sphinx-autobuild source build
 ```
