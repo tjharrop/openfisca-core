@@ -32,6 +32,29 @@ class VariableNameConflict(Exception):
     pass
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class TaxBenefitSystem(object):
     """
     Represents the legislation.
