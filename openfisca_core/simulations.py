@@ -38,6 +38,7 @@ class Simulation(object):
     steps_count = 1
     tax_benefit_system = None
     trace = False
+    start_of_time = periods.period('9999').start
 
     # ----- Simulation construction ----- #
 
@@ -169,7 +170,7 @@ class Simulation(object):
 
         # First, try to run a formula
         array = None
-        if (period.start >= periods.period('1970').start):
+        if (period.start >= self.start_of_time):
             array = self._run_formula(variable, entity, period, extra_params, max_nb_cycles)
 
         # If no result, try a base function
@@ -435,6 +436,8 @@ class Simulation(object):
 
             If a ``set_input`` property has been set for the variable, this method may accept inputs for periods not matching the ``definition_period`` of the variable. To read more about this, check the `documentation <https://openfisca.org/doc/coding-the-legislation/35_periods.html#automatically-process-variable-inputs-defined-for-periods-not-matching-the-definitionperiod>`_.
         """
+        if (period.start < self.start_of_time):
+            self.start_of_time = period.start
         self.get_holder(variable).set_input(period, value)
 
     def get_variable_entity(self, variable_name):
