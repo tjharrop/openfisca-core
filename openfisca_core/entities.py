@@ -202,6 +202,13 @@ When you request the computation of a variable within a formula, you must always
 See more information at <http://openfisca.org/doc/coding-the-legislation/35_periods.html#periods-for-variable>.
 '''.format(variable_name, filename, line_number, line_of_code).encode('utf-8'))
 
+    def condition(self, condition_name, variable_name, period):
+        condition_array = self(condition_name, period)
+        if condition_array.any():
+            return condition_array * self(variable_name, period)
+        else:
+            return self.get_holder(variable_name).default_array()
+
     def __call__(self, variable_name, period = None, options = [], **parameters):
         """
             Calculate the variable ``variable_name`` for the entity and the period ``period``, using the variable formula if it exists.
