@@ -74,7 +74,7 @@ def get_trace_tool_link(scenario, variables, api_url, trace_tool_url):
         'scenarios': [scenario_json],
         'variables': variables,
         }
-    url = trace_tool_url + '?' + urllib.urlencode({
+    url = trace_tool_url + '?' + urllib.parse.urlencode({
         'simulation': json.dumps(simulation_json),
         'api_url': api_url,
         })
