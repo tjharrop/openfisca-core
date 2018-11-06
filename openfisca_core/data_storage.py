@@ -102,9 +102,9 @@ class OnDiskStorage(object):
     def _decode_file(self, file):
         enum = self._enums.get(file)
         if enum is not None:
-            return EnumArray(np.load(file), enum)
+            return EnumArray(np.load(file)['arr_0'], enum)
         else:
-            return np.load(file)
+            return np.load(file)['arr_0']
 
     def get(self, period, extra_params = None):
         if self.is_eternal:
@@ -134,11 +134,11 @@ class OnDiskStorage(object):
             extra_params = tuple(str(param) for param in extra_params)
             filename = '{}_{}'.format(
                 filename, '_'.join(extra_params))
-        path = os.path.join(self.storage_dir, filename) + '.npy'
+        path = os.path.join(self.storage_dir, filename) + '.npz'
         if isinstance(value, EnumArray):
             self._enums[path] = value.possible_values
             value = value.view(np.ndarray)
-        np.save(path, value)
+        np.savez(path, value)
         if not extra_params:
             self._files[period] = path
         else:
@@ -169,7 +169,7 @@ class OnDiskStorage(object):
         self._files = files = {}
         # Restore self._files from content of storage_dir.
         for filename in os.listdir(self.storage_dir):
-            if not filename.endswith('.npy'):
+            if not filename.endswith('.npz'):
                 continue
             path = os.path.join(self.storage_dir, filename)
             filename_core = filename.rsplit('.', 1)[0]

@@ -71,33 +71,33 @@ def _dump_holder(holder, directory):
 def _dump_entity(entity, directory):
     path = os.path.join(directory, entity.key)
     os.mkdir(path)
-    np.save(os.path.join(path, "id.npy"), entity.ids)
+    np.savez(os.path.join(path, "id.npz"), entity.ids)
 
     if entity.is_person:
         return
 
-    np.save(os.path.join(path, "members_position.npy"), entity.members_position)
-    np.save(os.path.join(path, "members_entity_id.npy"), entity.members_entity_id)
-    np.save(os.path.join(path, "members_legacy_role.npy"), entity.members_legacy_role)
+    np.savez(os.path.join(path, "members_position.npz"), entity.members_position)
+    np.savez(os.path.join(path, "members_entity_id.npz"), entity.members_entity_id)
+    np.savez(os.path.join(path, "members_legacy_role.npz"), entity.members_legacy_role)
     encoded_roles = np.select(
         [entity.members_role == role for role in entity.flattened_roles],
         [role.key for role in entity.flattened_roles],
         )
-    np.save(os.path.join(path, "members_role.npy"), encoded_roles)
+    np.savez(os.path.join(path, "members_role.npz"), encoded_roles)
 
 
 def _restore_entity(entity, directory):
     path = os.path.join(directory, entity.key)
 
-    entity.ids = np.load(os.path.join(path, "id.npy"))
+    entity.ids = np.load(os.path.join(path, "id.npz"))['arr_0']
 
     if entity.is_person:
         return
 
-    entity.members_position = np.load(os.path.join(path, "members_position.npy"))
-    entity.members_entity_id = np.load(os.path.join(path, "members_entity_id.npy"))
-    entity.members_legacy_role = np.load(os.path.join(path, "members_legacy_role.npy"))
-    encoded_roles = np.load(os.path.join(path, "members_role.npy"))
+    entity.members_position = np.load(os.path.join(path, "members_position.npz"))['arr_0']
+    entity.members_entity_id = np.load(os.path.join(path, "members_entity_id.npz"))['arr_0']
+    entity.members_legacy_role = np.load(os.path.join(path, "members_legacy_role.npz"))['arr_0']
+    encoded_roles = np.load(os.path.join(path, "members_role.npz"))['arr_0']
     entity.members_role = np.select(
         [encoded_roles == role.key for role in entity.flattened_roles],
         [role for role in entity.flattened_roles],

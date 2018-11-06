@@ -301,13 +301,13 @@ class Holder(object):
                         extra_params_key = extra_params_to_json_key(extra_params, period)
                         values_dict[str(extra_params_key)] = [
                             transform_dated_value_to_json(cell, use_label = use_label)
-                            for cell in np.load(file).tolist()
+                            for cell in np.load(file)['arr_0'].tolist()
                             ]
                     value_json[str(period)] = values_dict
                 else:
                     value_json[str(period)] = [
                         transform_dated_value_to_json(cell, use_label = use_label)
-                        for cell in np.load(file_or_dict).tolist()
+                        for cell in np.load(file_or_dict)['arr_0'].tolist()
                         ]
         return value_json
 
