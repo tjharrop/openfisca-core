@@ -774,6 +774,7 @@ def instant_date(instant):
     return instant_date
 
 
+pp3Month = re.compile(r'(\d{4})?(?:-(\d{1,2})?(?:-(\d{1,2}))?)?')
 def period(value):
     """Return a new period, aka a triple (unit, start_instant, size).
 
@@ -800,16 +801,15 @@ def period(value):
         Parses simple periods respecting the ISO format, such as 2012 or 2015-03
         """
         try:
-            date = datetime.datetime.strptime(value, '%Y')
-        except ValueError:
-            try:
-                date = datetime.datetime.strptime(value, '%Y-%m')
-            except ValueError:
+            pMonth = pp3Month.match(value)
+            if not pMonth.group(1) or pMonth.group(3):
                 return None
-            else:
-                return Period((MONTH, Instant((date.year, date.month, 1)), 1))
-        else:
-            return Period((YEAR, Instant((date.year, date.month, 1)), 1))
+
+            groups = pMonth.groups(1)
+            date = datetime.datetime(*map(int, groups))
+            return Period((MONTH if pMonth.group(2) else YEAR, Instant((date.year, date.month, 1)), 1))
+        except ValueError:
+            return None
 
     def raise_error(value):
         message = linesep.join([
@@ -829,14 +829,12 @@ def period(value):
         raise_error(value)
 
     # try to parse as a simple period
-    period = parse_simple_period(value)
-    if period is not None:
-        return period
+    if ":" not in value:
+        period = parse_simple_period(value)
+        if period is not None:
+            return period
 
     # complex period must have a ':' in their strings
-    if ":" not in value:
-        raise_error(value)
-
     components = value.split(':')
 
     # left-most component must be a valid unit
