@@ -800,16 +800,13 @@ def period(value):
         """
         Parses simple periods respecting the ISO format, such as 2012 or 2015-03
         """
-        try:
-            pMonth = pp3Month.match(value)
-            if not pMonth.group(1) or pMonth.group(3):
-                return None
-
-            groups = pMonth.groups(1)
-            date = datetime.datetime(*map(int, groups))
-            return Period((MONTH if pMonth.group(2) else YEAR, Instant((date.year, date.month, 1)), 1))
-        except ValueError:
+        pMonth = pp3Month.match(value)
+        if not pMonth.group(1) or pMonth.group(3):
             return None
+
+        groups = pMonth.groups(1)
+        date = datetime.datetime(*map(int, groups))
+        return Period((MONTH if pMonth.group(2) else YEAR, Instant((date.year, date.month, 1)), 1))
 
     def raise_error(value):
         message = linesep.join([
