@@ -489,9 +489,13 @@ class ParameterNodeAtInstant(object):
         raise ParameterNotFound(param_name, self._instant_str)
 
     def __getitem__(self, key):
-        # If fancy indexing is used, cast to a vectorial node
         if isinstance(key, np.ndarray):
+            # If fancy indexing is used, cast to a vectorial node
             return VectorialParameterNodeAtInstant.build_from_node(self)[key]
+
+        elif issubclass(type(key), Enum):
+            enum = type(key)
+            key = key.name
         return self._children[key]
 
     def __iter__(self):
