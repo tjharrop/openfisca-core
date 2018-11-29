@@ -12,7 +12,7 @@ from datetime import date
 
 from openfisca_core import entities
 from openfisca_core import periods
-from openfisca_core.indexed_enums import Enum, ENUM_ARRAY_DTYPE
+from openfisca_core.indexed_enums import Enum, EnumArray, ENUM_ARRAY_DTYPE
 from openfisca_core.periods import MONTH, YEAR, ETERNITY
 from openfisca_core.base_functions import (
     missing_value,
@@ -187,6 +187,7 @@ class Variable(object):
 
         formulas_attr, unexpected_attrs = _partition(attr, lambda name, value: name.startswith(FORMULA_NAME_PREFIX))
         self.formulas = self.set_formulas(formulas_attr)
+        self.dependencies = SortedDict()
 
         if unexpected_attrs:
             raise ValueError(
@@ -416,9 +417,89 @@ class Variable(object):
 
         return None
 
+    def get_dependencies(self, period = None):
+        """
+        Returns the formula used to compute the variable at the given period.
+
+        If no period is given and the variable has several formula, return the oldest formula.
+
+        :returns: Formula used to compute the variable
+        :rtype: function
+        """
+
+        if not self.formulas:
+            return None
+
+        if period is None:
+            return self.dependencies.peekitem(index = 0)[1]  # peekitem gets the 1st key-value tuple (the oldest start_date and formula). Return the formula.
+
+        if isinstance(period, periods.Period):
+            instant = period.start
+        else:
+            try:
+                instant = periods.period(period).start
+            except ValueError:
+                instant = periods.instant(period)
+
+        if self.end and instant.date > self.end:
+            return None
+
+        instant = str(instant)
+        for start_date in reversed(self.formulas):
+            if start_date <= instant:
+                return self.dependencies[start_date]
+
+        return None
+
+
     def clone(self):
         clone = self.__class__()
         return clone
+
+
+    def compute_dependencies(self, tax_benefit_system):
+        parameters_at = tax_benefit_system.get_parameters_at_instant
+        for instant_str, formula in self.formulas.items():
+
+            if instant_str == '0001-01-01':
+                instant_str = '2018-11-01'
+
+            dependencies = []
+            class Dummy(entities.GroupEntity):
+                def __init__(self):
+                    # We just need a dummy class, object() won't do for setattr
+                    pseudo_simulation = Exception()
+                    setattr(pseudo_simulation, 'persons', self)
+                    super().__init__(pseudo_simulation)
+                def __getattr__(self, attribute):
+                    return self
+                def has_role(self, role):
+                    return False
+                def sum(self, array, role = None):
+                    return np.empty(0)
+                def nb_persons(self, role = None):
+                    return 1
+                def __call__(self, variable_name, period = None, options = [], **parameters):
+                    dependencies.append(variable_name)
+                    variable = tax_benefit_system.get_variable(variable_name)
+                    array = np.empty(1, dtype = variable.dtype)
+                    if variable.value_type == Enum:
+                        array.fill(variable.default_value.index)
+                        return EnumArray(array, variable.possible_values)
+                    array.fill(variable.default_value)
+                    return array
+
+            if self.definition_period == ETERNITY:
+                period = periods.instant(instant_str)
+            else:
+                period = periods.instant(instant_str).period(self.definition_period)
+
+            if formula.__code__.co_argcount == 2:
+                formula(Dummy(), period)
+            else:
+                formula(Dummy(), period, parameters_at)
+
+            self.dependencies[instant_str] = dependencies
 
 
 def _partition(dict, predicate):

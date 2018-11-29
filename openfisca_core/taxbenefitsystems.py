@@ -401,3 +401,7 @@ class TaxBenefitSystem(object):
                 for variable_name, variable in self.variables.items()
                 if variable.entity == entity
                 }
+
+    def compute_dependencies(self):
+        for variable in self.get_variables():
+            self.get_variable(variable).compute_dependencies(self)

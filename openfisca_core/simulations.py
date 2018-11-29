@@ -269,6 +269,7 @@ class Simulation(object):
             parameters_at = self.tax_benefit_system.get_parameters_at_instant
 
         try:
+            print("dependencies", variable.get_dependencies(period))
             self._check_for_cycle(variable, period)
             if formula.__code__.co_argcount == 2:
                 array = formula(entity, period)

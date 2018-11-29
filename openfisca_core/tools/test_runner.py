@@ -110,6 +110,7 @@ def run_tests(tax_benefit_system, paths, options = {}):
     +-------------------------------+-----------+-------------------------------------------+
 
     """
+    tax_benefit_system.compute_dependencies()
     argv = sys.argv[:1]  # Nose crashes if it gets any unexpected argument.
     if options.get('verbose'):
         argv.append('--nocapture')  # Do not capture output when verbose mode is activated
