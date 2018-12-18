@@ -14,6 +14,7 @@ from openfisca_country_template import CountryTaxBenefitSystem
 from openfisca_country_template.entities import Person
 from openfisca_core.tools import assert_near
 
+
 # 1 <--> 2 with same period
 class variable1(Variable):
     value_type = int
