@@ -11,7 +11,7 @@ from openfisca_core.indexed_enums import Enum
 from openfisca_core.commons import to_unicode
 
 
-def getSortedRequestedComputations(input_data):
+def get_sorted_requested_computations(input_data):
     generator = dpath.util.search(input_data, '*/*/*/*', afilter = lambda t: t is None, yielded = True)
 
     def key(match):
@@ -25,7 +25,7 @@ def calculate(tax_benefit_system, input_data):
     simulation = SimulationBuilder().build_from_entities(tax_benefit_system, input_data)
     computation_results = {}
 
-    for path in getSortedRequestedComputations(input_data):
+    for path in get_sorted_requested_computations(input_data):
         entity_plural, entity_id, variable_name, period = path.split('/')
         variable = tax_benefit_system.get_variable(variable_name)
         result = simulation.calculate(variable_name, period)
@@ -51,7 +51,7 @@ def calculate(tax_benefit_system, input_data):
 def trace(tax_benefit_system, input_data):
     simulation = SimulationBuilder().build_from_entities(tax_benefit_system, input_data, trace = True)
 
-    for path in getSortedRequestedComputations(input_data):
+    for path in get_sorted_requested_computations(input_data):
         entity_plural, entity_id, variable_name, period = path.split('/')
         simulation.calculate(variable_name, period)
 
