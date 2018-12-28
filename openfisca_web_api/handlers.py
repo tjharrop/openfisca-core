@@ -11,14 +11,21 @@ from openfisca_core.indexed_enums import Enum
 from openfisca_core.commons import to_unicode
 
 
+def getSortedRequestedComputations(input_data):
+    generator = dpath.util.search(input_data, '*/*/*/*', afilter = lambda t: t is None, yielded = True)
+
+    def key(match):
+        entity_plural, entity_id, variable_name, period = match[0].split('/')
+        return period
+
+    return [computation[0] for computation in sorted(generator, key=key)]
+
+
 def calculate(tax_benefit_system, input_data):
     simulation = SimulationBuilder().build_from_entities(tax_benefit_system, input_data)
-
-    requested_computations = dpath.util.search(input_data, '*/*/*/*', afilter = lambda t: t is None, yielded = True)
     computation_results = {}
 
-    for computation in requested_computations:
-        path = computation[0]
+    for path in getSortedRequestedComputations(input_data):
         entity_plural, entity_id, variable_name, period = path.split('/')
         variable = tax_benefit_system.get_variable(variable_name)
         result = simulation.calculate(variable_name, period)
@@ -44,9 +51,7 @@ def calculate(tax_benefit_system, input_data):
 def trace(tax_benefit_system, input_data):
     simulation = SimulationBuilder().build_from_entities(tax_benefit_system, input_data, trace = True)
 
-    requested_computations = dpath.util.search(input_data, '*/*/*/*', afilter = lambda t: t is None, yielded = True)
-    for computation in requested_computations:
-        path = computation[0]
+    for path in getSortedRequestedComputations(input_data):
         entity_plural, entity_id, variable_name, period = path.split('/')
         simulation.calculate(variable_name, period)
 
