@@ -118,3 +118,20 @@ def test_name():
         }
     parameter = ParameterNode('root', data = parameter_data)
     assert parameter.children["2010"].name == "root.2010"
+
+
+def test_enum_indexing():
+    period = '2017-01'
+
+    simulation = tax_benefit_system.new_scenario().init_from_attributes(
+        period = period,
+        input_variables = {
+            'salary': 2000,
+            },
+        ).new_simulation()
+
+    taxes = tax_benefit_system.parameters(period).taxes
+    specific_contribution = simulation.calculate('specific_contribution', period)
+    types_specific_contribution = specific_contribution.possible_values
+
+    assert taxes[types_specific_contribution.social_security_contribution] is not None
