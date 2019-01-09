@@ -22,7 +22,7 @@ jobs:
           name: Install dependencies
           command: |
             make install
-            # pip install --editable git+https://github.com/openfisca/country-template.git@BRANCH_NAME#egg=OpenFisca-Country-Template  # use a specific branch of OpenFisca-Country-Template
+            pip install --editable git+https://github.com/openfisca/country-template.git@test-enum-index#egg=OpenFisca-Country-Template  # use a specific branch of OpenFisca-Country-Template
             # pip install --editable git+https://github.com/openfisca/extension-template.git@BRANCH_NAME#egg=OpenFisca-Extension-Template  # use a specific branch of OpenFisca-Extension-Template
 
       - save_cache:
@@ -87,7 +87,7 @@ jobs:
           name: Install dependencies
           command: |
             make install
-            # pip install --editable git+https://github.com/openfisca/country-template.git@BRANCH_NAME#egg=OpenFisca-Country-Template  # use a specific branch of OpenFisca-Country-Template
+            pip install --editable git+https://github.com/openfisca/country-template.git@test-enum-index#egg=OpenFisca-Country-Template  # use a specific branch of OpenFisca-Country-Template
             # pip install --editable git+https://github.com/openfisca/extension-template.git@BRANCH_NAME#egg=OpenFisca-Extension-Template  # use a specific branch of OpenFisca-Extension-Template
 
       - save_cache:
