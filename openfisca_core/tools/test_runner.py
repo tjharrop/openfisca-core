@@ -141,14 +141,17 @@ def _generate_tests_from_file(tax_benefit_system, path_to_file, options):
 
         def check():
             try:
-                _run_test(simulation, test)
+                inputs = _run_test(simulation, test)
+                if simulation.tracer:
+                    if len(inputs) > 0:
+                        log.warning("Unused inputs in {}: {}".format(title, str(inputs)))
             except Exception:
                 log.error(title)
                 raise
             finally:
                 if verbose:
                     print("Computation log:")
-                    simulation.tracer.print_computation_log()
+                    # simulation.tracer.print_computation_log()
 
         yield unittest.FunctionTestCase(check)
 
@@ -221,7 +224,7 @@ def _parse_test(tax_benefit_system, test, options, yaml_path):
 
     try:
         builder = SimulationBuilder()
-        input = test.pop('input', {})
+        input = test.get('input', {})
         period = test.get('period')
         verbose = options.get('verbose')
         simulation = builder.build_from_dict(current_tax_benefit_system, input, default_period = period, trace = verbose)
@@ -241,18 +244,20 @@ def _run_test(simulation, test):
 
     if output is None:
         return
+    inputs = list(test.get('input',{}))
     for key, expected_value in output.items():
         if simulation.tax_benefit_system.variables.get(key):  # If key is a variable
-            _check_variable(simulation, key, expected_value, test.get('period'), test)
+            _check_variable(simulation, inputs, key, expected_value, test.get('period'), test)
         elif simulation.entities.get(key):  # If key is an entity singular
             for variable_name, value in expected_value.items():
-                _check_variable(simulation, variable_name, value, test.get('period'), test)
+                _check_variable(simulation, inputs, variable_name, value, test.get('period'), test)
         else:
             entity_array = simulation.get_entity(plural = key)  # If key is an entity plural
             for entity_id, value_by_entity in expected_value.items():
                 for variable_name, value in value_by_entity.items():
                     entity_index = entity_array.ids.index(entity_id)
-                    _check_variable(simulation, variable_name, value, test.get('period'), test, entity_index)
+                    _check_variable(simulation, inputs, variable_name, value, test.get('period'), test, entity_index)
+    return inputs
 
 
 def _should_ignore_variable(variable_name, test):
@@ -264,14 +269,18 @@ def _should_ignore_variable(variable_name, test):
     return variable_ignored or variable_not_tested
 
 
-def _check_variable(simulation, variable_name, expected_value, period, test, entity_index = None):
+def _check_variable(simulation, inputs, variable_name, expected_value, period, test, entity_index = None):
     if _should_ignore_variable(variable_name, test):
         return
     if isinstance(expected_value, dict):
         for requested_period, expected_value_at_period in expected_value.items():
-            _check_variable(simulation, variable_name, expected_value_at_period, requested_period, test, entity_index)
+            _check_variable(simulation, inputs, variable_name, expected_value_at_period, requested_period, test, entity_index)
         return
     actual_value = simulation.calculate(variable_name, period)
+    if simulation.tracer:
+        for variable, period, parameters, depth in simulation.tracer._computation_log:
+            if variable in inputs:
+                inputs.remove(variable)
     if entity_index is not None:
         actual_value = actual_value[entity_index]
     return assert_near(

@@ -90,7 +90,7 @@ class Tracer(object):
         return new
 
     @staticmethod
-    def _get_key(variable_name, period, **parameters):
+    def _get_key(variable_name, period, parameters):
         if parameters.get('extra_params'):
             return "{}<{}><{}>".format(variable_name, period, '><'.join(map(str, parameters['extra_params'])))
         return "{}<{}>".format(variable_name, period)
@@ -103,7 +103,7 @@ class Tracer(object):
             :param Period period: Period for which the variable is being computed
             :param list parameters: Parameter with which the variable is being computed
         """
-        key = self._get_key(variable_name, period, **parameters)
+        key = self._get_key(variable_name, period, parameters)
 
         if self.stack:  # The variable is a dependency of another variable
             parent = self.stack[-1]
@@ -115,7 +115,7 @@ class Tracer(object):
             self.trace[key] = {'dependencies': [], 'parameters': {}}
 
         self.stack.append(key)
-        self._computation_log.append((key, len(self.stack)))
+        self._computation_log.append((variable_name, period, parameters, len(self.stack)))
         self.usage_stats[variable_name]['nb_requests'] += 1
 
     def record_calculation_parameter_access(self, parameter_name, period, value):
@@ -140,7 +140,7 @@ class Tracer(object):
             :param numpy.ndarray result: Result of the computation
             :param list parameters: Parameter with which the variable is being computed
         """
-        key = self._get_key(variable_name, period, **parameters)
+        key = self._get_key(variable_name, period, parameters)
         expected_key = self.stack.pop()
 
         if not key == expected_key:
@@ -158,7 +158,7 @@ class Tracer(object):
             :param Period period: Period for which the variable is being computed
             :param list parameters: Parameter with which the variable is being computed
         """
-        key = self._get_key(variable_name, period, **parameters)
+        key = self._get_key(variable_name, period, parameters)
         expected_key = self.stack.pop()
 
         if not key == expected_key:
@@ -219,7 +219,7 @@ class Tracer(object):
             :param bool aggregate: See :any:`print_computation_log`
             :param bool ignore_zero: If ``True``, don't print dependencies if their value is 0
         """
-        key = self._get_key(variable_name, period, extra_params = extra_params)
+        key = self._get_key(variable_name, period, {extra_params: extra_params})
 
         def _print_details(key, depth):
             if depth > 0 and ignore_zero and np.all(self.trace[key]['value'] == 0):
@@ -240,7 +240,7 @@ class Tracer(object):
             If ``aggregate`` is ``True``, only print the minimum, maximum, and average value of each computed vector.
             This mode is more suited for simulations on a large population.
         """
-        return [self._print_node(node, depth, aggregate) for node, depth in self._computation_log]
+        return [self._print_node(self._get_key(name, period, parameters), depth, aggregate) for name, period, parameters, depth in self._computation_log]
 
     def print_computation_log(self, aggregate = False):
         for line in self.computation_log(aggregate):
