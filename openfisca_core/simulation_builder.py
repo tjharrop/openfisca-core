@@ -18,6 +18,10 @@ from openfisca_core.tools import eval_expression
 
 class SimulationBuilder(object):
 
+    def __init__(self):
+        self.memberships = {}
+
+
     def build_from_dict(self, tax_benefit_system, input_dict, default_period = None, **kwargs):
         """
             Build a simulation from ``input_dict``
@@ -37,6 +41,14 @@ class SimulationBuilder(object):
             return self.build_from_entities(tax_benefit_system, input_dict, default_period, **kwargs)
         else:
             return self.build_from_variables(tax_benefit_system, input_dict, default_period, **kwargs)
+
+
+    def build_entity(self, tax_benefit_system, entity_plural, entity_ids):
+        self.memberships[entity_plural] = entity_ids
+
+    def get_entity_count(self, entity_plural):
+        return len(self.memberships[entity_plural])
+
 
     def build_from_entities(self, tax_benefit_system, input_dict, default_period = None, **kwargs):
         """

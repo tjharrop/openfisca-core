@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import OrderedDict
+from typing import Iterable
 
 from pytest import raises, fixture
 
@@ -219,3 +220,9 @@ def test_inconsistent_input(simulation_builder):
     with raises(ValueError) as error:
         simulation_builder.build_from_dict(tax_benefit_system, yaml.load(input_yaml))
     assert "its length is 3 while there are 2" in error.value.args[0]
+
+
+def test_build_entity(simulation_builder):
+    persons_ids : Iterable = [5, 4, 1, 2, 3]
+    simulation_builder.build_entity(tax_benefit_system, 'persons', persons_ids)
+    assert simulation_builder.get_entity_count('persons') == len(persons_ids)
