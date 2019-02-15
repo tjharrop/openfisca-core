@@ -313,6 +313,21 @@ class Variable(object):
 
         return formulas
 
+
+    def default_array(self):
+        """
+        Return a new array of the appropriate length for the entity, filled with the variable default values.
+        """
+
+        array_size = self.entity.count
+        array = np.empty(array_size, dtype = self.dtype)
+        if self.value_type == Enum:
+            array.fill(self.default_value.index)
+            return EnumArray(array, self.possible_values)
+        array.fill(self.default_value)
+        return array
+
+
     def parse_formula_name(self, attribute_name):
         """
         Returns the starting date of a formula based on its name.

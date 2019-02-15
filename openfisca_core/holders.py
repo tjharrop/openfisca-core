@@ -257,14 +257,7 @@ class Holder(object):
         """
         Return a new array of the appropriate length for the entity, filled with the variable default values.
         """
-
-        array_size = self.entity.count
-        array = np.empty(array_size, dtype = self.variable.dtype)
-        if self.variable.value_type == Enum:
-            array.fill(self.variable.default_value.index)
-            return EnumArray(array, self.variable.possible_values)
-        array.fill(self.variable.default_value)
-        return array
+        return self.variable.default_array()
 
 
 def set_input_dispatch_by_period(holder, period, array):

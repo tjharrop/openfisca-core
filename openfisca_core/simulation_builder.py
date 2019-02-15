@@ -367,19 +367,31 @@ class SimulationBuilder(object):
 
         raise SituationParsingError(path, e.message)
 
-    def get_count(self, entity_name):
-        return self.axes_entity_counts.get(entity_name, self.entity_counts[entity_name])
 
-    def get_ids(self, entity_name):
-        return self.axes_entity_ids.get(entity_name, self.entity_ids[entity_name])
 
-    def get_memberships(self, entity_name):
+
+
+    def build_entity(self, tax_benefit_system, entity_plural, entity_ids):
+        self.memberships[entity_plural] = entity_ids
+        self.entity_counts[entity_plural] = len(entity_ids)
+
+ 
+    def get_count(self, entity_plural):
+        return self.axes_entity_counts.get(entity_plural, self.entity_counts[entity_plural])
+
+
+
+
+    def get_ids(self, entity_plural):
+        return self.axes_entity_ids.get(entity_plural, self.entity_ids[entity_plural])
+
+    def get_memberships(self, entity_plural):
         # Return empty array for the "persons" entity
-        return self.axes_memberships.get(entity_name, self.memberships.get(entity_name, []))
+        return self.axes_memberships.get(entity_plural, self.memberships.get(entity_plural, []))
 
-    def get_roles(self, entity_name):
+    def get_roles(self, entity_plural):
         # Return empty array for the "persons" entity
-        return self.axes_roles.get(entity_name, self.roles.get(entity_name, []))
+        return self.axes_roles.get(entity_plural, self.roles.get(entity_plural, []))
 
     def add_parallel_axis(self, axis):
         # All parallel axes have the same count and entity.

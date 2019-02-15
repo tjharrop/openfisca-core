@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from collections import OrderedDict
+from typing import Iterable
+
 from enum import Enum
 from datetime import date
 
@@ -348,6 +350,12 @@ def test_unallocated_person(simulation_builder, group_entity):
             'Household_2': {'parents': ['Tom']},
             })
     assert exception.value.error == {'households': "{'Sarah'} have been declared in persons, but are not members of any household. All persons must be allocated to a household."}
+
+
+def test_build_entity(simulation_builder):
+    persons_ids : Iterable = [5, 4, 1, 2, 3]
+    simulation_builder.build_entity(tax_benefit_system, 'persons', persons_ids)
+    assert simulation_builder.get_count('persons') == len(persons_ids)
 
 
 # Test Intégration
