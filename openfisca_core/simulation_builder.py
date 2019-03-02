@@ -308,7 +308,36 @@ class SimulationBuilder(object):
                 except ValueError as e:
                     raise SituationParsingError(path_in_json, e.args[0])
                 variable = entity.get_variable(variable_name)
-                self.add_variable_value(entity, variable, instance_index, instance_id, period_str, value)
+
+                if (variable.set_input == 'dispatch') or (variable.set_input == 'divide'):
+                    period = period(period_str)
+                    period_size = period.size
+                    period_unit = period.unit
+
+                    if variable.definition_period == MONTH:
+                        cached_period_unit = periods.MONTH
+                    elif variable.definition_period == YEAR:
+                        cached_period_unit = periods.YEAR
+                    else:
+                        raise ValueError('set_input_dispatch_by_period can be used only for yearly or monthly variables.')
+
+                    after_instant = period.start.offset(period_size, period_unit)
+
+                    # Cache the input data, skipping the existing cached months
+                    sub_period = period.start.period(cached_period_unit)
+                    while sub_period.start < after_instant:
+                        existing_array = holder.get_array(sub_period)
+                        if existing_array is None:
+                            holder._set(sub_period, array)
+                        else:
+                            # The array of the current sub-period is reused for the next ones.
+                            # TODO: refactor or document this behavior
+                            array = existing_array
+                        sub_period = sub_period.offset(1)
+
+                    self.add_variable_value(entity, variable, instance_index, instance_id, str(sub_period), value)
+                else:
+                    self.add_variable_value(entity, variable, instance_index, instance_id, period_str, value)
 
     def add_variable_value(self, entity, variable, instance_index, instance_id, period_str, value):
         path_in_json = [entity.plural, instance_id, variable.name, period_str]

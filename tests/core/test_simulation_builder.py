@@ -425,3 +425,30 @@ def test_inconsistent_input(simulation_builder):
     with raises(ValueError) as error:
         simulation_builder.build_from_dict(tax_benefit_system, yaml.load(input_yaml))
     assert "its length is 3 while there are 2" in error.value.args[0]
+
+
+def test_different_period_structures_for_different_individuals(simulation_builder):
+    input_yaml = """
+        persons:
+            Bill:
+                salary:
+                    2015-01: 2916.6666666666665
+                    2015-02: 2916.6666666666665
+                    2015-03: 2916.6666666666665
+                    2015-04: 2916.6666666666665
+                    2015-05: 2916.6666666666665
+                    2015-06: 2916.6666666666665
+                    2015-07: 2916.6666666666665
+                    2015-08: 2916.6666666666665
+                    2015-09: 2916.6666666666665
+                    2015-10: 2916.6666666666665
+                    2015-11: 2916.6666666666665
+                    2015-12: 2916.6666666666665
+            Bob:
+                salary:
+                    2015: 6000
+        household:
+            parents: [Bill, Bob]
+    """
+    data = yaml.load(input_yaml)
+    simulation = simulation_builder.build_from_dict(tax_benefit_system, data)
