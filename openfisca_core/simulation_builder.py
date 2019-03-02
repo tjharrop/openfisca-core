@@ -134,15 +134,9 @@ class SimulationBuilder(object):
         """
         count = _get_person_count(input_dict)
         simulation = self.build_default_simulation(tax_benefit_system, count, **kwargs)
-        for variable, value in input_dict.items():
-            if not isinstance(value, dict):
-                if self.default_period is None:
-                    raise SituationParsingError([variable],
-                        "Can't deal with type: expected object. Input variables should be set for specific periods. For instance: {'salary': {'2017-01': 2000, '2017-02': 2500}}, or {'birth_date': {'ETERNITY': '1980-01-01'}}.")
-                simulation.set_input(variable, self.default_period, value)
-            else:
-                for period_str, dated_value in value.items():
-                    simulation.set_input(variable, period_str, dated_value)
+        self.init_variable_values(simulation.persons, input_dict, 0)
+        for entity in simulation.entities.values():
+            self.finalize_variables_init(entity)
         return simulation
 
     def build_default_simulation(self, tax_benefit_system, count = 1, **kwargs):
@@ -155,11 +149,13 @@ class SimulationBuilder(object):
 
         simulation = Simulation(tax_benefit_system, **kwargs)
         for entity in simulation.entities.values():
-            entity.count = count
-            entity.ids = np.array(range(count))
+            self.entity_ids[entity.plural] = list(range(count))
+            self.entity_counts[entity.plural] = count
+            entity.count = count  # So we can used filled_array below
             if not entity.is_person:
-                entity.members_entity_id = entity.ids  # Each person is its own group entity
-                entity.members_role = entity.filled_array(entity.flattened_roles[0])
+                self.memberships[entity.plural] = self.entity_ids[entity.plural]
+                self.roles[entity.plural] = entity.filled_array(entity.flattened_roles[0])
+            self.finalize_variables_init(entity)
         return simulation
 
     def explicit_singular_entities(self, tax_benefit_system, input_dict):

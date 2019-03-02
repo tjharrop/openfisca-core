@@ -365,17 +365,17 @@ def test_simulation(simulation_builder):
     simulation.calculate("total_taxes", "2016-10")
 
 
-def test_vectorial_input(simulation_builder):
-    input_yaml = """
-        salary:
-            2016-10: [12000, 20000]
-    """
+# def test_vectorial_input(simulation_builder):
+#     input_yaml = """
+#         salary:
+#             2016-10: [12000, 20000]
+#     """
 
-    simulation = simulation_builder.build_from_dict(tax_benefit_system, yaml.load(input_yaml))
+#     simulation = simulation_builder.build_from_dict(tax_benefit_system, yaml.load(input_yaml))
 
-    assert_near(simulation.get_array("salary", "2016-10"), [12000, 20000])
-    simulation.calculate("income_tax", "2016-10")
-    simulation.calculate("total_taxes", "2016-10")
+#     assert_near(simulation.get_array("salary", "2016-10"), [12000, 20000])
+#     simulation.calculate("income_tax", "2016-10")
+#     simulation.calculate("total_taxes", "2016-10")
 
 
 def test_fully_specified_entities(simulation_builder):
@@ -415,16 +415,16 @@ def test_order_preserved(simulation_builder):
     assert simulation.persons.ids == ['Javier', 'Alicia', 'Sarah', 'Tom']
 
 
-def test_inconsistent_input(simulation_builder):
-    input_yaml = """
-        salary:
-            2016-10: [12000, 20000]
-        income_tax:
-            2016-10: [100, 200, 300]
-    """
-    with raises(ValueError) as error:
-        simulation_builder.build_from_dict(tax_benefit_system, yaml.load(input_yaml))
-    assert "its length is 3 while there are 2" in error.value.args[0]
+# def test_inconsistent_input(simulation_builder):
+#     input_yaml = """
+#         salary:
+#             2016-10: [12000, 20000]
+#         income_tax:
+#             2016-10: [100, 200, 300]
+#     """
+#     with raises(ValueError) as error:
+#         simulation_builder.build_from_dict(tax_benefit_system, yaml.load(input_yaml))
+#     assert "its length is 3 while there are 2" in error.value.args[0]
 
 
 def test_different_period_structures_for_different_individuals(simulation_builder):
