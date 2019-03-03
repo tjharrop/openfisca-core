@@ -12,6 +12,7 @@ from openfisca_core.commons import basestring_type
 from openfisca_core.errors import VariableNotFound, SituationParsingError, PeriodMismatchError
 from openfisca_core.periods import period, key_period_size, MONTH, YEAR
 from openfisca_core.simulations import Simulation
+from openfisca_core.tools import eval_expression
 
 
 class SimulationBuilder(object):
@@ -323,13 +324,18 @@ class SimulationBuilder(object):
                     sub_period = target_period.start.period(cached_period_unit)
                     while sub_period.start < after_instant:
                         if variable.set_input == 'divide' and variable.definition_period == MONTH:
-                            sub_value = value / target_period.size_in_months
+                            sub_value = self.convert(variable, value) / target_period.size_in_months
                         else:
                             sub_value = value
                         self.add_variable_value(entity, variable, instance_index, instance_id, str(sub_period), sub_value)
                         sub_period = sub_period.offset(1)
                 else:
                     self.add_variable_value(entity, variable, instance_index, instance_id, period_str, value)
+
+    def convert(self, variable, value):
+        if variable.value_type in (float, int) and isinstance(value, str):
+            value = eval_expression(value)
+        return value
 
     def add_variable_value(self, entity, variable, instance_index, instance_id, period_str, value):
         path_in_json = [entity.plural, instance_id, variable.name, period_str]
@@ -344,6 +350,7 @@ class SimulationBuilder(object):
             array = variable.default_array(array_size)
 
         try:
+            value = self.convert(variable, value)
             value = variable.check_set_value(value)
         except ValueError as error:
             raise SituationParsingError(path_in_json, *error.args)

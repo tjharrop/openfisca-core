@@ -14,7 +14,6 @@ from openfisca_core.data_storage import InMemoryStorage, OnDiskStorage
 from openfisca_core.errors import PeriodMismatchError
 from openfisca_core.indexed_enums import Enum
 from openfisca_core.periods import MONTH, YEAR, ETERNITY
-from openfisca_core.tools import eval_expression
 
 log = logging.getLogger(__name__)
 
@@ -180,8 +179,6 @@ class Holder(object):
                 warning_message,
                 Warning
                 )
-        if self.variable.value_type in (float, int) and isinstance(array, str):
-            array = eval_expression(array)
         return self._set(period, array)
 
     def _to_array(self, value):
