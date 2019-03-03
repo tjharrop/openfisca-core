@@ -85,19 +85,19 @@ def test_get_memory_usage():
     salary_holder = simulation.person.get_holder('salary')
     memory_usage = salary_holder.get_memory_usage()
     assert_equal(memory_usage['total_nb_bytes'], 0)
-    salary_holder.set_input(make_period(2017), np.asarray([30000]))
+    salary_holder.set_input(make_period("2017-01"), np.asarray([30000]))
     memory_usage = salary_holder.get_memory_usage()
     assert_equal(memory_usage['nb_cells_by_array'], 1)
     assert_equal(memory_usage['cell_size'], 4)  # float 32
     assert_equal(memory_usage['nb_cells_by_array'], 1)  # one person
-    assert_equal(memory_usage['nb_arrays'], 12)  # 12 months
-    assert_equal(memory_usage['total_nb_bytes'], 4 * 12 * 1)
+    assert_equal(memory_usage['nb_arrays'], 1)  # 1 months
+    assert_equal(memory_usage['total_nb_bytes'], 4 * 1 * 1)
 
 
 def test_get_memory_usage_with_trace():
     simulation = get_simulation(single, trace = True)
     salary_holder = simulation.person.get_holder('salary')
-    salary_holder.set_input(make_period(2017), np.asarray([30000]))
+    salary_holder.set_input(make_period("2017-01"), np.asarray([30000]))
     simulation.calculate('salary', '2017-01')
     simulation.calculate('salary', '2017-01')
     simulation.calculate('salary', '2017-02')
@@ -113,14 +113,13 @@ force_storage_on_disk = MemoryConfig(max_memory_occupation = 0)
 def test_delete_arrays_on_disk():
     simulation = get_simulation(single, memory_config = force_storage_on_disk)  # Force using disk
     salary_holder = simulation.person.get_holder('salary')
-    salary_holder.set_input(make_period(2017), np.asarray([30000]))
-    salary_holder.set_input(make_period(2018), np.asarray([60000]))
+    salary_holder.set_input(make_period("2017-01"), np.asarray([2500]))
+    salary_holder.set_input(make_period("2018-01"), np.asarray([5000]))
     assert_equal(simulation.person('salary', '2017-01'), 2500)
     assert_equal(simulation.person('salary', '2018-01'), 5000)
-    salary_holder.delete_arrays(period = 2018)
-    salary_holder.set_input(make_period(2018), np.asarray([15000]))
+    salary_holder.delete_arrays(period = make_period("2018-01"))
     assert_equal(simulation.person('salary', '2017-01'), 2500)
-    assert_equal(simulation.person('salary', '2018-01'), 1250)
+    assert_equal(simulation.person('salary', '2018-01'), 0)
 
 
 def test_cache_disk():
