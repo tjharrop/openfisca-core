@@ -50,13 +50,17 @@ def test_calculate_add():
 
 def test_calculate_divide():
     period = "2016-01"
-    simulation = tax_benefit_system.new_scenario().init_from_attributes(
-        period = period,
-        input_variables = dict(
-            accommodation_size = 100,
-            housing_occupancy_status = 'tenant',
-            ),
-        ).new_simulation()
+    simulation = tax_benefit_system.new_scenario().init_from_dict({
+            "period": period,
+            "persons":{"Bill":{}},
+            "households":{
+                "h1":{
+                    "parents":["Bill"],
+                    "accommodation_size": 100,
+                    "housing_occupancy_status": 'tenant'
+                    }
+                }
+        }).new_simulation()
     assert_near(simulation.calculate_divide('housing_tax', period), [1000 / 12.], absolute_error_margin = 0.01)
 
 

@@ -322,7 +322,11 @@ class SimulationBuilder(object):
                     # Cache the input data, skipping the existing cached months
                     sub_period = target_period.start.period(cached_period_unit)
                     while sub_period.start < after_instant:
-                        self.add_variable_value(entity, variable, instance_index, instance_id, str(sub_period), value)
+                        if variable.set_input == 'divide' and variable.definition_period == MONTH:
+                            sub_value = value / target_period.size_in_months
+                        else:
+                            sub_value = value
+                        self.add_variable_value(entity, variable, instance_index, instance_id, str(sub_period), sub_value)
                         sub_period = sub_period.offset(1)
                 else:
                     self.add_variable_value(entity, variable, instance_index, instance_id, period_str, value)
