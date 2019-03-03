@@ -95,7 +95,7 @@ def test_input_variable_neutralization():
     period = '2017-01'
     scenario = reform.new_scenario().init_from_attributes(
         period = period,
-        input_variables = dict(salary = [1200, 1000])
+        input_variables = dict(salary = 1200)
         )
 
     reform = test_salary_neutralization(tax_benefit_system)
@@ -104,9 +104,9 @@ def test_input_variable_neutralization():
         reform_simulation = scenario.new_simulation()
         assert 'You cannot set a value for the variable' in raised_warnings[0].message.args[0]
     salary = reform_simulation.calculate('salary', period)
-    assert_near(salary, [0, 0],)
+    assert_near(salary, [0],)
     disposable_income_reform = reform_simulation.calculate('disposable_income', period = period)
-    assert_near(disposable_income_reform, [600, 600])
+    assert_near(disposable_income_reform, [600])
 
 
 def test_permanent_variable_neutralization():

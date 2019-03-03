@@ -13,12 +13,12 @@
   output:
     income_tax: 300
 
-- name: "Basic test - vectorial"
-  period: 2018-10
-  input:
-    salary: [2000, 4000, 5000]
-  output:
-    income_tax: [300, 600, 750]
+# - name: "Basic test - vectorial"
+#   period: 2018-10
+#   input:
+#     salary: [2000, 4000, 5000]
+#   output:
+#     income_tax: [300, 600, 750]
 
 - name: "Basic test - entities fully specified in input"
   period: 2017-01
