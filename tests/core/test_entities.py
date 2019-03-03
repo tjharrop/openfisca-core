@@ -8,6 +8,8 @@ from openfisca_core.tools.test_runner import yaml
 from openfisca_country_template.entities import Household
 from openfisca_country_template.situation_examples import single, couple
 
+import pytest
+
 from .test_countries import tax_benefit_system
 
 TEST_CASE = {
@@ -141,6 +143,8 @@ def test_person_variable_with_constructor():
     assert_near(person('salary', "2017-12"), [2000, 0, 4000, 0, 0])
 
 
+@pytest.mark.xfail
+# Defining values for a whole year *and* months in the year is no longer supported
 def test_set_input_with_constructor():
     simulation_yaml = """
         persons:
