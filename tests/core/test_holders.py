@@ -71,14 +71,13 @@ def test_permanent_variable_filled():
 def test_delete_arrays():
     simulation = get_simulation(single)
     salary_holder = simulation.person.get_holder('salary')
-    salary_holder.set_input(make_period(2017), np.asarray([30000]))
-    salary_holder.set_input(make_period(2018), np.asarray([60000]))
+    salary_holder.set_input(make_period("2017-01"), np.asarray([2500]))
+    salary_holder.set_input(make_period("2018-01"), np.asarray([5000]))
     assert_equal(simulation.person('salary', '2017-01'), 2500)
     assert_equal(simulation.person('salary', '2018-01'), 5000)
-    salary_holder.delete_arrays(period = 2018)
-    salary_holder.set_input(make_period(2018), np.asarray([15000]))
+    salary_holder.delete_arrays(period = make_period("2018-01"))
     assert_equal(simulation.person('salary', '2017-01'), 2500)
-    assert_equal(simulation.person('salary', '2018-01'), 1250)
+    assert_equal(simulation.person('salary', '2018-01'), 0)
 
 
 def test_get_memory_usage():
