@@ -150,18 +150,6 @@ def test_spiral_heuristic():
     assert_near(variable6_last_month, [11])
 
 
-def test_allowed_cycle_different_order():
-    simulation = tax_benefit_system.new_scenario().init_from_attributes(
-        period = reference_period,
-        ).new_simulation(debug = True)
-    variable5 = simulation.calculate('variable5', period = reference_period)
-    variable6 = simulation.calculate('variable6', period = reference_period)
-    variable6_last_month = simulation.calculate('variable6', reference_period.last_month)
-    assert_near(variable5, [5])
-    assert_near(variable6, [11])
-    assert_near(variable6_last_month, [0])
-
-
 def test_cotisation_1_level():
     month = reference_period.last_month
     simulation = tax_benefit_system.new_scenario().init_from_attributes(
