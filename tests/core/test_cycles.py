@@ -134,7 +134,7 @@ def test_spirals_result_in_default_value():
 
 def test_spiral_heuristic():
     """
-    Calculate variable5 then variable6 then in the order order, to verify that the first calculated variable
+    Calculate variable5 then variable6 then in the other order, to verify that the first calculated variable
     has no effect on the result.
     """
     simulation = tax_benefit_system.new_scenario().init_from_attributes(
