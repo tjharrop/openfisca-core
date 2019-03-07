@@ -264,7 +264,6 @@ class Simulation(object):
         else:
             parameters_at = self.tax_benefit_system.get_parameters_at_instant
 
-
         if formula.__code__.co_argcount == 2:
             array = formula(entity, period)
         else:
@@ -351,7 +350,6 @@ class Simulation(object):
         if len(previous) > 1:
             message = "Quasicircular definition detected on formula {}@{} involving {}".format(variable.name, period, self.computation_stack)
             raise SpiralError(message, variable.name)
-
 
     def _clean_cycle_detection_data(self, variable_name):
         """
