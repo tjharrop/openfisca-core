@@ -110,7 +110,6 @@ def test_spirals_result_in_default_value():
     assert_near(variable3, [0])
 
 
-@pytest.mark.xfail
 def test_spiral_heuristic():
     """
     Calculate variable5 then variable6 then in the other order, to verify that the first calculated variable
@@ -124,8 +123,8 @@ def test_spiral_heuristic():
     variable6_last_month = simulation.calculate('variable6', reference_period.last_month)
     simulation.tracer.print_computation_log()
     assert_near(variable5, [5])
-    assert_near(variable6, [11])
-    assert_near(variable6_last_month, [11])
+    assert_near(variable6, [6])
+    assert_near(variable6_last_month, [6])
 
 
 def test_cotisation_1_level():
