@@ -73,6 +73,16 @@ class variable6(Variable):
         return 6 + variable5
 
 
+class variable7(Variable):
+    value_type = int
+    entity = Person
+    definition_period = MONTH
+
+    def formula(person, period):
+        variable5 = person('variable5', period)
+        return 7 + variable5
+
+
 # december cotisation depending on november value
 class cotisation(Variable):
     value_type = int
@@ -89,7 +99,7 @@ class cotisation(Variable):
 # TaxBenefitSystem instance declared after formulas
 tax_benefit_system = CountryTaxBenefitSystem()
 tax_benefit_system.add_variables(variable1, variable2, variable3, variable4,
-    variable5, variable6, cotisation)
+    variable5, variable6, variable7, cotisation)
 
 reference_period = periods.period('2013-01')
 
@@ -121,10 +131,18 @@ def test_spiral_heuristic():
     variable5 = simulation.calculate('variable5', period = reference_period)
     variable6 = simulation.calculate('variable6', period = reference_period)
     variable6_last_month = simulation.calculate('variable6', reference_period.last_month)
-    simulation.tracer.print_computation_log()
     assert_near(variable5, [5])
     assert_near(variable6, [6])
     assert_near(variable6_last_month, [6])
+
+
+def test_spiral_cache():
+    simulation = tax_benefit_system.new_scenario().init_from_attributes(
+        period = reference_period,
+        ).new_simulation(trace = True)
+    simulation.calculate('variable7', period = reference_period)
+    cached_variable7 = simulation.get_holder('variable7').get_array(reference_period)
+    assert cached_variable7 is not None
 
 
 def test_cotisation_1_level():
