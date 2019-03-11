@@ -65,7 +65,7 @@ def test_clone():
 
 
 def test_get_memory_usage():
-    simulation = Simulation(tax_benefit_system = tax_benefit_system, simulation_json = single)
+    simulation = Simulation(tax_benefit_system = tax_benefit_system, simulation_json = single, trace = True)
     simulation.calculate('disposable_income', '2017-01')
     memory_usage = simulation.get_memory_usage(variables = ['salary'])
     assert(memory_usage['total_nb_bytes'] > 0)
