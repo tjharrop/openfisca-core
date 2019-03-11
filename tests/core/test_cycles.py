@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import pytest
 from nose.tools import raises
 
 from openfisca_core import periods
