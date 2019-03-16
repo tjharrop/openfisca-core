@@ -120,19 +120,15 @@ def test_spirals_result_in_default_value():
 
 
 def test_spiral_heuristic():
-    """
-    Calculate variable5 then variable6 then in the other order, to verify that the first calculated variable
-    has no effect on the result.
-    """
     simulation = tax_benefit_system.new_scenario().init_from_attributes(
         period = reference_period,
         ).new_simulation(trace = True)
     variable5 = simulation.calculate('variable5', period = reference_period)
     variable6 = simulation.calculate('variable6', period = reference_period)
     variable6_last_month = simulation.calculate('variable6', reference_period.last_month)
-    assert_near(variable5, [5])
-    assert_near(variable6, [6])
-    assert_near(variable6_last_month, [6])
+    assert_near(variable5, [11])
+    assert_near(variable6, [11])
+    assert_near(variable6_last_month, [11])
 
 
 def test_spiral_cache():
@@ -150,4 +146,4 @@ def test_cotisation_1_level():
         period = month,  # December
         ).new_simulation(debug = True)
     cotisation = simulation.calculate('cotisation', period = month)
-    assert_near(cotisation, [2])
+    assert_near(cotisation, [0])
