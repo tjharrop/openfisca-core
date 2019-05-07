@@ -29,7 +29,7 @@ def run_yaml_test(path, options = None):
 
 
 def test_success():
-    assert run_yaml_test('test_success.yaml') == EXIT_OK
+    assert run_yaml_test('test_success.yml') == EXIT_OK
 
 
 def test_fail():
