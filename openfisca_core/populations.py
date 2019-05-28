@@ -252,8 +252,8 @@ class Population(object):
 
 
 class GroupPopulation(Population):
-    def __init__(self, entity, members, **kw):
-        super().__init__(entity, **kw)
+    def __init__(self, entity, members):
+        Population.__init__(self, entity)
         self.members = members
         self._members_entity_id = None
         self._members_role = None
@@ -545,8 +545,8 @@ class GroupPopulation(Population):
 
 class SubPopulation(Population):
 
-    def __init__(self, super_population: Population, condition: np.ndarray, **kw):
-        super().__init__(super_population.entity, **kw)  # type: ignore # (see https://github.com/python/mypy/issues/5887)
+    def __init__(self, super_population: Population, condition: np.ndarray):
+        Population.__init__(self, super_population.entity)
         self.super_population = super_population
         self.condition = condition
         self.count = np.sum(condition)
@@ -615,7 +615,8 @@ class GroupSubPopulation(SubPopulation, GroupPopulation):  # type: ignore # Fals
     def __init__(self, super_population: Population, condition: np.ndarray):
         members_condition = super_population.project(condition)
         members = SubPopulation(super_population.members, members_condition)
-        super().__init__(super_population = super_population, condition = condition, members = members)
+        GroupPopulation.__init__(self, super_population.entity, members)
+        SubPopulation.__init__(self, super_population, condition)
         self._members_entity_id = None
         self._members_role = None
         self._members_position = None
