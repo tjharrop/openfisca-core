@@ -12,7 +12,7 @@ class Frame:
         self.stack['period'] = self.period  
 
     def __exit__(self, type, value, traceback):
-        pass
+        print(self.stack)
 
 
 class SimpleTracer:
@@ -27,6 +27,11 @@ class SimpleTracer:
     @stack.setter
     def stack(self, stack):
         self._stack = stack
+
+
+    def new_frame(self, variable, period):
+        return Frame(variable, period)
+
 
     def record(self, frame_name, period):
         frame = Frame(frame_name, period)

@@ -9,8 +9,10 @@ class DummySimulation:
     def __init__(self):
         self.tracer = SimpleTracer()
 
-    def calculate(self, variable, period, **parameters):
-        self.tracer.record(variable.__class__.__name__, period)
+    def calculate(self, variable, period):
+        # with self.tracer.record(variable.__class__.__name__, period) as frame:
+        self.tracer.record(variable.__class__.__name__, period)    
+        
         variable.formula(self, period)
 
 class v0:
@@ -19,8 +21,8 @@ class v0:
         self.simulation = DummySimulation()
 
     def formula(self, simulation, period):
-        simulation.calculate(v1(), period)
-        simulation.calculate(v2(), period)
+        simulation.calculate(v1(), period) # v0 v1
+        simulation.calculate(v2(), period) # v0 v2
 
 
 class v1:
@@ -38,6 +40,15 @@ class v2:
 @fixture
 def simulation():
     return DummySimulation()
+
+
+def test_stack_one_level():
+    tracer = SimpleTracer()
+    assert tracer.stack == []
+    frame = tracer.new_frame('toto', 2017)
+    assert tracer.stack == [('toto', 2017)]
+    frame.exit()
+    assert tracer.stack == []
 
 
 def test_record(simulation):
