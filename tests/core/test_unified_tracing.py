@@ -45,10 +45,8 @@ def simulation():
 def test_stack_one_level():
     tracer = SimpleTracer()
     frame = tracer.record('toto', 2017)
-    assert frame.stack == {}
-    frame.__enter__()
-    assert frame.stack == {'name': 'toto', 'period': 2017}  # [('toto', 2017)]
-    frame.__exit__(None, None, None)
+    with frame:
+        assert frame.stack == {'name': 'toto', 'period': 2017}  # [('toto', 2017)]
     assert frame.stack == {}
 
 
