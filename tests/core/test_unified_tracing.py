@@ -24,8 +24,8 @@ class DummySimulation:
 
 class v0:
 
-    def __init__(self, tracer):
-        self.simulation = DummySimulation(tracer)
+    def __init__(self, simulation):
+        self.simulation = simulation
 
     def formula(self, period):
         self.simulation.calculate(v1(), period) # v0 v1
@@ -45,8 +45,13 @@ class v2:
 
 
 @fixture
-def simulation():
+def simulation_simple_tracing():
     return DummySimulation(SimpleTracer())
+
+
+@fixture
+def simulation_full_tracing():
+    return DummySimulation(FullTracer())
 
 
 def test_stack_one_level():
@@ -57,13 +62,13 @@ def test_stack_one_level():
     assert frame.stack == {}
 
 
-def test_record():
-    variable = v0(FullTracer())
+def test_record(simulation_full_tracing):
+    variable = v0(simulation_full_tracing)
     period = '2019-01'
 
-    variable.simulation.calculate(variable, period)
+    simulation_full_tracing.calculate(variable, period)
 
-    assert variable.simulation.stack == {
+    assert simulation_full_tracing.stack == {
         'name': 'v0',
         'period': '2019-01',  
         'children': [
@@ -79,10 +84,10 @@ def test_record():
     }
 
 
-def test_pop():
-    variable = v0(SimpleTracer())
+def test_pop(simulation_simple_tracing):
+    variable = v0(simulation_simple_tracing)
     period = '2019-01'
 
-    variable.simulation.calculate(variable, period)
+    simulation_simple_tracing.calculate(variable, period)
     
-    assert variable.simulation.stack == {}
+    assert simulation_simple_tracing.stack == {}
