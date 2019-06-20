@@ -50,8 +50,8 @@ def test_no_wrapping():
 
 def test_trace_enums(tracer):
     tracer.enter_calculation("A", 2017)
+    tracer.record_calculation_result(HousingOccupancyStatus.encode(np.array(['tenant'])))
     tracer.exit_calculation()
-    # tracer.record_calculation_end("A", 2017, HousingOccupancyStatus.encode(np.array(['tenant'])))
 
     lines = tracer.computation_log()
     assert lines[0] == "  A<2017> >> ['tenant']"
