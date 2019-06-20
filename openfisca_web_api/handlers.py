@@ -2,11 +2,15 @@
 
 
 from copy import deepcopy
+from collections import ChainMap
+from typing import Dict
+
 
 import dpath
 
 from openfisca_core.simulation_builder import SimulationBuilder
 from openfisca_core.indexed_enums import Enum, EnumArray
+
 
 
 def calculate(tax_benefit_system, input_data):
@@ -39,9 +43,23 @@ def calculate(tax_benefit_system, input_data):
     return input_data
 
 
-def get_flat_trace(node):
-    flat_trace = {}
-    return flat_trace
+def get_flat_trace(node) -> Dict[str, Dict]:
+    key = f"{node['name']}<{node['period']}>"
+    node_trace = {
+        key: {
+        'dependencies': [
+            f"{child['name']}<{child['period']}>"
+            for child in node['children']
+        ],
+        'value': node['value']
+        }}
+    child_traces = [
+        get_flat_trace(child)
+        for child in node['children']
+    ]
+
+    return dict(ChainMap(node_trace, *child_traces))
+
 
 
 def trace(tax_benefit_system, input_data):
