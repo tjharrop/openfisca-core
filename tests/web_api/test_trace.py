@@ -78,7 +78,8 @@ def test_trace_parameters():
 
     response = subject.post('/trace', data = simulation_json, content_type = 'application/json')
     response_json = json.loads(response.data.decode('utf-8'))
-
+    
+    assert len(dpath.util.get(response_json, 'trace/housing_tax<2017>/parameters')) > 0
     assert_items_equal(
         dpath.util.get(response_json, 'trace/housing_tax<2017>/parameters/taxes.housing_tax.minimal_amount<2017-01-01>'),
         200
