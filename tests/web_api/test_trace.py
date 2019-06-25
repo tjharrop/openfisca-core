@@ -80,7 +80,5 @@ def test_trace_parameters():
     response_json = json.loads(response.data.decode('utf-8'))
     
     assert len(dpath.util.get(response_json, 'trace/housing_tax<2017>/parameters')) > 0
-    assert_items_equal(
-        dpath.util.get(response_json, 'trace/housing_tax<2017>/parameters/taxes.housing_tax.minimal_amount<2017-01-01>'),
-        200
-        )
+    taxes__housing_tax__minimal_amount = dpath.util.get(response_json, 'trace/housing_tax<2017>/parameters/taxes.housing_tax.minimal_amount<2017-01-01>')
+    assert taxes__housing_tax__minimal_amount == 200
