@@ -249,3 +249,24 @@ def test_calculation_time():
     simulation_children = performance_json['children']
     assert simulation_children[0]['name'] == 'a<2019>'
     assert simulation_children[0]['value'] == 1000
+
+
+def test_calculation_time_with_depth():
+    tracer = FullTracer()
+
+    tracer.enter_calculation('a', 2019)
+    tracer.record_start(1500)
+
+    tracer.enter_calculation('b', 2019)
+    tracer.record_start(1600)
+    tracer.record_end(2300)
+    tracer.exit_calculation()
+
+    tracer.record_end(2500)
+    tracer.exit_calculation()
+
+    performance_json = tracer.performance_log.json()
+    simulation_grand_children = performance_json['children'][0]['children']
+
+    assert simulation_grand_children[0]['name'] == 'b<2019>'
+    assert simulation_grand_children[0]['value'] == 700
