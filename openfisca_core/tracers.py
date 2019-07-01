@@ -9,7 +9,7 @@ from openfisca_core.parameters import ParameterNodeAtInstant, VectorialParameter
 from openfisca_core.indexed_enums import EnumArray
 
 
-class TracingParameterNodeAtInstant(object):
+class TracingParameterNodeAtInstant():
 
     def __init__(self, parameter_node_at_instant, tracer):
         self.parameter_node_at_instant = parameter_node_at_instant
