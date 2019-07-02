@@ -123,6 +123,10 @@ class SimulationBuilder(object):
             except PeriodMismatchError as e:
                 self.raise_period_mismatch(population.entity, instances_json, e)
 
+        for variable_name in self.input_buffer.keys():
+            for period_str in self.input_buffer[variable_name].keys():
+                simulation.record_input(variable_name, period_str)
+
         return simulation
 
     def build_from_variables(self, tax_benefit_system, input_dict):

@@ -56,6 +56,9 @@ class SimpleTracer:
     def record_end(self, timestamp):
         pass
 
+    def record_status(self, status):
+        pass
+
     def exit_calculation(self):
         self.stack.pop()
 
@@ -93,6 +96,9 @@ class FullTracer:
 
     def record_end(self, timestamp):
         self._current_node['end'] = timestamp
+
+    def record_status(self, status):
+        self._current_node['status'] = status
 
     def exit_calculation(self):
         self._stacker.exit_calculation()
@@ -222,6 +228,8 @@ class ComputationLog:
 
 class PerformanceLog:
 
+    values = {'error': 50, 'zero': 10, 'default': 0, 'input': -5, 'cached': -10, 'computed': -30}
+
     def __init__(self, full_tracer):
         self._full_tracer = full_tracer
 
@@ -229,11 +237,12 @@ class PerformanceLog:
         first_tree = self._full_tracer.trees[0]
         last_tree = self._full_tracer.trees[-1]
         simulation_total_time = last_tree['end'] - first_tree['start']
-
         children = [self.json_tree(tree) for tree in self._full_tracer.trees]
+        # total = sum([child['value'] for child in children])
         return {'name': 'simulation', 'value': simulation_total_time, 'children': children}
 
     def json_tree(self, tree):
-        calculation_total_time = tree['end'] - tree['start']
         children = [self.json_tree(child) for child in tree['children']]
-        return {'name': f"{tree['name']}<{tree['period']}>", 'value': calculation_total_time, 'children': children}
+        calculation_total_time = tree['end'] - tree['start']
+        # total = sum([child['value'] for child in children]) if children else 1
+        return {'name': f"{tree['name']}<{tree['period']}>", 'value': calculation_total_time, 'children': children, 'delta': self.values.get(tree['status'])}

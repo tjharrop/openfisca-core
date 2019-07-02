@@ -64,6 +64,13 @@ class Simulation(object):
         self.max_spiral_loops = 1
         self.memory_config = None
         self._data_storage_dir = None
+        self._inputs = set()
+
+    def record_input(self, name, period):
+        self._inputs.add(f"{name}{period}")
+
+    def is_input(self, name, period):
+        return f"{name}{str(period)}" in self._inputs
 
     @property
     def trace(self):
@@ -133,10 +140,16 @@ class Simulation(object):
         # First look for a value already cached
         cached_array = holder.get_array(period)
         if cached_array is not None:
+            if self.is_input(variable.name, period):
+                self.tracer.record_status("input")
+            else:
+                self.tracer.record_status("cached")
             return cached_array
 
         array = None
 
+        # Possibly wasteful
+        default = holder.default_array()
         # First, try to run a formula
         try:
             self._check_for_cycle(variable.name, period)
@@ -144,13 +157,19 @@ class Simulation(object):
 
             # If no result, use the default value and cache it
             if array is None:
-                array = holder.default_array()
-
-            array = self._cast_formula_result(array, variable)
-            holder.put_in_cache(array, period)
+                array = default
+                self.tracer.record_status("default")
+            else:
+                array = self._cast_formula_result(array, variable)
+                if (np.array_equal(array, default)):
+                    self.tracer.record_status("zero")
+                else:
+                    self.tracer.record_status("computed")
+                holder.put_in_cache(array, period)
 
         except SpiralError:
-            array = holder.default_array()
+            self.tracer.record_status("error")
+            array = default
 
         return array
 
