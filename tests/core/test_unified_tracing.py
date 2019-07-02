@@ -270,3 +270,24 @@ def test_calculation_time_with_depth():
 
     assert simulation_grand_children[0]['name'] == 'b<2019>'
     assert simulation_grand_children[0]['value'] == 700
+
+
+class MockFullTracer(FullTracer):
+    def __init__(self, performance_log):
+        self.mpl = performance_log
+
+    @property
+    def performance_log(self):
+        return self.mpl
+
+
+class MockPerformanceLog:
+    def json(self):
+        self.json_called = True
+
+
+def test_print_performance_log():
+    performance_log = MockPerformanceLog()
+    tracer = MockFullTracer(performance_log)
+    tracer.print_performance_log()
+    assert performance_log.json_called
