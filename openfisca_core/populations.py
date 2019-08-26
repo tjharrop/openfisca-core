@@ -128,7 +128,7 @@ See more information at <https://openfisca.org/doc/coding-the-legislation/35_per
             )
 
     @projectable
-    def has_role(self, role):
+    def has_role(self, role: Role) -> np.ndarray:
         """
             Check if a person has a given role within its :any:`GroupEntity`
 

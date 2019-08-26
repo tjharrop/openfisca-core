@@ -4,7 +4,7 @@ import textwrap
 from os import linesep
 
 
-class Role(object):
+class Role:
 
     def __init__(self, description, entity):
         self.entity = entity
@@ -19,7 +19,7 @@ class Role(object):
         return "Role({})".format(self.key)
 
 
-class Entity(object):
+class Entity:
     """
         Represents an entity (e.g. a person, a household, etc.) on which calculations can be run.
     """
