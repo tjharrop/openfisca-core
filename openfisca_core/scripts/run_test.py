@@ -7,6 +7,9 @@ import os
 from openfisca_core.tools.test_runner import run_tests
 from openfisca_core.scripts import build_tax_benefit_system
 
+import cProfile
+import pstats
+
 
 def main(parser):
     args = parser.parse_args()
@@ -24,4 +27,16 @@ def main(parser):
         }
 
     paths = [os.path.abspath(path) for path in args.path]
-    sys.exit(run_tests(tax_benefit_system, paths, options))
+    if args.profile:
+        pr = cProfile.Profile()
+        pr.enable()
+
+    result = run_tests(tax_benefit_system, paths, options)
+
+    if args.profile:
+        pr.disable()
+        sortby = 'cumulative'
+        ps = pstats.Stats(pr).sort_stats(sortby)
+        ps.dump_stats('openfisca_stats.dmp')
+
+    sys.exit(result)
