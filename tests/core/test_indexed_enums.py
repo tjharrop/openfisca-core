@@ -68,3 +68,17 @@ def test_enum_encode_when_array_is_scalar_array_of_indices(my_enum):
     result = my_enum.encode(values)
 
     assert result == 1
+
+
+def test_enum_encode_when_array_is_another_data_structure(my_enum):
+    values = [my_enum.bar]
+
+    with pytest.raises(AttributeError):
+        my_enum.encode(values)
+
+
+def test_enum_encode_when_array_is_not_a_data_structure(my_enum):
+    values = my_enum.bar
+
+    with pytest.raises(AttributeError):
+        my_enum.encode(values)
