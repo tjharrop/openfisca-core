@@ -30,6 +30,14 @@ def test_enum_encode_when_array_is_array_of_values(my_enum):
     assert result[0] == 1
 
 
+def test_enum_encode_when_array_is_scalar_array_of_value(my_enum):
+    values = array(my_enum.bar.value)
+
+    result = my_enum.encode(values)
+
+    assert result == 1
+
+
 def test_enum_encode_when_array_is_array_of_enums(my_enum):
     values = array([my_enum.bar])
 
@@ -38,9 +46,25 @@ def test_enum_encode_when_array_is_array_of_enums(my_enum):
     assert result[0] == 1
 
 
+def test_enum_encode_when_array_is_scalar_array_of_enum(my_enum):
+    values = array(my_enum.bar)
+
+    result = my_enum.encode(values)
+
+    assert result == 1
+
+
 def test_enum_encode_when_array_is_array_of_indices(my_enum):
     values = array([1])
 
     result = my_enum.encode(values)
 
     assert result[0] == 1
+
+
+def test_enum_encode_when_array_is_scalar_array_of_indices(my_enum):
+    values = array(1)
+
+    result = my_enum.encode(values)
+
+    assert result == 1
