@@ -100,3 +100,10 @@ def test_enum_array___ne__(my_enum):
     result = enum_array1 != enum_array2
 
     assert result
+
+
+def test_enum_array__forbidden_operation(my_enum):
+    enum_array = EnumArray(array([1]), my_enum)
+
+    with pytest.raises(TypeError):
+        enum_array * 1
