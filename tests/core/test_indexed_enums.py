@@ -85,8 +85,8 @@ def test_enum_encode_when_array_is_not_a_data_structure(my_enum):
 
 
 def test_enum_array___eq__(my_enum):
-    enum_array1 = EnumArray(array([1]), my_enum)
-    enum_array2 = EnumArray(array([1]), my_enum)
+    enum_array1 = EnumArray(array(1), my_enum)
+    enum_array2 = EnumArray(array(1), my_enum)
 
     result = enum_array1 == enum_array2
 
@@ -94,8 +94,8 @@ def test_enum_array___eq__(my_enum):
 
 
 def test_enum_array___ne__(my_enum):
-    enum_array1 = EnumArray(array([0]), my_enum)
-    enum_array2 = EnumArray(array([1]), my_enum)
+    enum_array1 = EnumArray(array(0), my_enum)
+    enum_array2 = EnumArray(array(1), my_enum)
 
     result = enum_array1 != enum_array2
 
@@ -103,7 +103,7 @@ def test_enum_array___ne__(my_enum):
 
 
 def test_enum_array__forbidden_operation(my_enum):
-    enum_array = EnumArray(array([1]), my_enum)
+    enum_array = EnumArray(array(1), my_enum)
 
     with pytest.raises(TypeError):
         enum_array * 1
@@ -128,8 +128,16 @@ def test_enum_array_decode_to_str(my_enum):
 
 
 def test_enum_array___repr__(my_enum):
-    enum_array = EnumArray(array([1]), my_enum)
+    enum_array = EnumArray(array(1), my_enum)
 
     result = repr(enum_array)
 
-    assert result == "EnumArray([<MyEnum.bar: 'bar'>])"
+    assert result == "EnumArray(MyEnum.bar)"
+
+
+def test_enum_array___str__(my_enum):
+    enum_array = EnumArray(array(1), my_enum)
+
+    result = str(enum_array)
+
+    assert result == "bar"
