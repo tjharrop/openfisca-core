@@ -116,3 +116,12 @@ def test_enum_array_decode(my_enum):
     result = enum_array.decode()
 
     assert result == values
+
+
+def test_enum_array_decode_to_str(my_enum):
+    values = array(my_enum.bar.value)
+    enum_array = my_enum.encode(values)
+
+    result = enum_array.decode_to_str()
+
+    assert result == values
