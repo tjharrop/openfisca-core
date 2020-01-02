@@ -107,3 +107,12 @@ def test_enum_array__forbidden_operation(my_enum):
 
     with pytest.raises(TypeError):
         enum_array * 1
+
+
+def test_enum_array_decode(my_enum):
+    values = array(my_enum.bar)
+    enum_array = my_enum.encode(values)
+
+    result = enum_array.decode()
+
+    assert result == values
