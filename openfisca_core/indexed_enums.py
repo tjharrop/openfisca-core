@@ -9,8 +9,6 @@ from numpy import (
     logical_not as not_,
     ndarray,
     select,
-    size,
-    take,
     )
 
 ENUM_ARRAY_DTYPE = int16
@@ -85,11 +83,8 @@ class Enum(BaseEnum):
             # gives them a different identity from the ones imported in the usual way.
             # So, instead of relying on the "cls" passed in, we use only its name to
             # check that the values in the array, if non-empty, are of the right type.
-            array_size: int = size(array)
-            array_name: str = take(array, 0).__class__.__name__
-
-            if array_size > 0 and array_name is cls.__name__:
-                cls = take(array, 0).__class__
+            if len(array) > 0 and array[0].__class__.__name__ is cls.__name__:
+                cls = array[0].__class__
 
             array = select(
                 [array == item for item in cls],
