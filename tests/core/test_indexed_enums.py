@@ -28,3 +28,11 @@ def test_enum_encode_when_array_is_array_of_values(my_enum):
     result = my_enum.encode(values)
 
     assert result[0] == 1
+
+
+def test_enum_encode_when_array_is_array_of_enums(my_enum):
+    values = array([my_enum.bar])
+
+    result = my_enum.encode(values)
+
+    assert result[0] == 1
