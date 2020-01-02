@@ -36,3 +36,11 @@ def test_enum_encode_when_array_is_array_of_enums(my_enum):
     result = my_enum.encode(values)
 
     assert result[0] == 1
+
+
+def test_enum_encode_when_array_is_array_of_indices(my_enum):
+    values = array([1])
+
+    result = my_enum.encode(values)
+
+    assert result[0] == 1
