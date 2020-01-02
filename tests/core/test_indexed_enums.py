@@ -82,3 +82,12 @@ def test_enum_encode_when_array_is_not_a_data_structure(my_enum):
 
     with pytest.raises(AttributeError):
         my_enum.encode(values)
+
+
+def test_enum_array___eq__(my_enum):
+    enum_array1 = EnumArray(array([1]), my_enum)
+    enum_array2 = EnumArray(array([1]), my_enum)
+
+    result = enum_array1 == enum_array2
+
+    assert result
