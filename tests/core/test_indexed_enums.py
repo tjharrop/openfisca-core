@@ -91,3 +91,12 @@ def test_enum_array___eq__(my_enum):
     result = enum_array1 == enum_array2
 
     assert result
+
+
+def test_enum_array___ne__(my_enum):
+    enum_array1 = EnumArray(array([0]), my_enum)
+    enum_array2 = EnumArray(array([1]), my_enum)
+
+    result = enum_array1 != enum_array2
+
+    assert result
