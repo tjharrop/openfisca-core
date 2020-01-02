@@ -125,3 +125,11 @@ def test_enum_array_decode_to_str(my_enum):
     result = enum_array.decode_to_str()
 
     assert result == values
+
+
+def test_enum_array___repr__(my_enum):
+    enum_array = EnumArray(array([1]), my_enum)
+
+    result = repr(enum_array)
+
+    assert result == "EnumArray([<MyEnum.bar: 'bar'>])"
