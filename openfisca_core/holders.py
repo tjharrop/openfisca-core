@@ -149,7 +149,7 @@ class Holder(object):
             periodMap = {k: periods.period(k) for k in keys}
             periodValues = periodMap.values()
             starts = [p.start for p in periodValues]
-            ends = [p.offset(p.size_in_months - 1).start for p in periodValues]
+            ends = [p.offset(p.size_in_months - 1, unit=MONTH).start for p in periodValues]
             start = min(starts)
             end = max(ends)
 
@@ -161,20 +161,24 @@ class Holder(object):
             full_size = (self.population.count, size)
             presence = np.full(full_size, False)
             values = self.variable.default_array(full_size)
+            dim1, dim2 = np.indices(full_size)
 
             # Set single period values
             for k in keys:
                 p = periodMap[k]
                 if p.size_in_months == 1:
                     column = month_index(p.start)
-                    presence[:, column], values[:, column] = buffer[k]
+                    p_presence, p_values = buffer[k]
+                    tile_count = self.population.count // p_values.size
+                    presence[:, column] = np.tile(p_presence, tile_count)
+                    values[:, column] = np.tile(p_values, tile_count)
 
             # Set values for multiple period input
             for k in keys:
                 p = periodMap[k]
                 if p.size_in_months != 1:
                     # Determine period indexes
-                    idx = np.array(range(p.size_in_months)) + month_index(p.start)
+                    idx = slice(month_index(p.start), p.size_in_months)
 
                     counts = p.size_in_months - presence[:, idx].sum(axis=1)
                     current_sum = values[:, idx].sum(axis=1)
@@ -182,9 +186,10 @@ class Holder(object):
                     p_presence, p_values = buffer[k]
                     spread_value = (p_values - current_sum) / counts
 
-                    # Set indefined values
-                    values[p_presence, ~presence[p_presence, idx]] = spread_value[p_presence]
-                    presence[p_presence, ~presence[p_presence, idx]] = True
+                    i1 = dim1[p_presence, idx][~presence[p_presence, idx]]
+                    i2 = dim2[p_presence, idx][~presence[p_presence, idx]]
+                    values[i1, i2] = np.repeat(spread_value[p_presence], counts[p_presence])
+                    presence[i1, i2] = True
 
             # Extract relevant slices
             first = start.period(MONTH)
