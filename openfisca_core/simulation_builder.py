@@ -505,15 +505,13 @@ class SimulationBuilder(object):
             axis_entity_step_size = self.entity_counts[axis_entity.plural]
             # Distribute values along axes
             for axis in parallel_axes:
-                axis_index = axis.get('index', 0)
                 axis_period = axis.get('period', self.default_period)
                 axis_name = axis['name']
                 variable = axis_entity.get_variable(axis_name)
                 array = self.get_input(axis_name, axis_period)
                 if array is None:
                     array = variable.default_array(axis_count * axis_entity_step_size)
-                array[axis_index:: axis_entity_step_size] = np.linspace(axis['min'], axis['max'], axis_count)
-                # Set input
+                array[:] = np.repeat(np.linspace(axis['min'], axis['max'], axis_count), axis_entity_step_size)
                 self.input_buffer[axis_name][str(axis_period)] = array
         else:
             axes_linspaces = [
@@ -531,14 +529,13 @@ class SimulationBuilder(object):
                 axis_entity_step_size = self.entity_counts[axis_entity.plural]
                 # Distribute values along the grid
                 for axis in parallel_axes:
-                    axis_index = axis.get('index', 0)
                     axis_period = axis['period'] or self.default_period
                     axis_name = axis['name']
                     variable = axis_entity.get_variable(axis_name)
                     array = self.get_input(axis_name, axis_period)
                     if array is None:
                         array = variable.default_array(cell_count * axis_entity_step_size)
-                    array[axis_index:: axis_entity_step_size] = axis['min'] \
+                    array[:] = axis['min'] \
                         + mesh.reshape(cell_count) * (axis['max'] - axis['min']) / (axis_count - 1)
                     self.input_buffer[axis_name][str(axis_period)] = array
 
