@@ -149,12 +149,12 @@ class Holder(object):
             periodMap = {k: periods.period(k) for k in keys}
             periodValues = periodMap.values()
             starts = [p.start for p in periodValues]
-            ends = [p.offset(p.size_in_months - 1, unit=MONTH).start for p in periodValues]
             start = min(starts)
+            ends = [p.offset(p.size_in_months - 1, unit=MONTH).start for p in periodValues]
             end = max(ends)
 
             def month_index(instant):
-                return (instant.year - start.year) * 12 + (instant.month - start.month % 12)
+                return (instant.year - start.year) * 12 + ((instant.month - start.month) % 12)
 
             size = month_index(end) + 1
 
