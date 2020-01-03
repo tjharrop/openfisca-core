@@ -479,9 +479,9 @@ class SimulationBuilder(object):
             # Adjust counts
             self.axes_entity_counts[entity_name] = self.get_count(entity_name) * cell_count
             # Adjust ids
-            original_ids = self.get_ids(entity_name) * cell_count
-            indices = np.arange(0, cell_count * self.entity_counts[entity_name])
-            adjusted_ids = [id + str(ix) for id, ix in zip(original_ids, indices)]
+            original_ids = self.get_ids(entity_name)
+            indices = np.arange(0, cell_count)
+            adjusted_ids = [id + str(ix) for ix in indices for id in original_ids]
             self.axes_entity_ids[entity_name] = adjusted_ids
             # Adjust roles
             original_roles = self.get_roles(entity_name)
