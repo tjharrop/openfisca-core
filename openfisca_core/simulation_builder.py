@@ -409,12 +409,13 @@ class SimulationBuilder(object):
                 holder = population.get_holder(variable_name)
             except ValueError:  # Wrong entity, we can just ignore that
                 continue
-            buffer = self.input_buffer[variable_name]
-            periods = [period(period_str) for period_str in self.input_buffer[variable_name].keys()]
+            buffer = holder.solve_input_data(self.input_buffer[variable_name])
+
+            periods = [period(period_str) for period_str in buffer.keys()]
             # We need to handle small periods first for set_input to work
             sorted_periods = sorted(periods, key=key_period_size)
             for period_value in sorted_periods:
-                (present, values) = buffer[str(period_value)]
+                values = buffer[str(period_value)]
                 # Hack to replicate the values in the persons entity
                 # when we have an axis along a group entity but not persons
                 array = np.tile(values, population.count // len(values))

@@ -79,3 +79,17 @@
   output:
     household:
       housing_allowance: 100
+
+- name: "Multiple input formats"
+  period: 2015-01
+  absolute_error_margin: 0.01
+  input:
+    persons:
+      Alicia:
+        salary:
+          2015-01: 100
+      Bob:
+        salary:
+          month:2015-01:10: 2000
+  output:
+    income_tax: [15, 30]

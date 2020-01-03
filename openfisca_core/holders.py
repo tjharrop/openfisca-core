@@ -139,6 +139,64 @@ class Holder(object):
         return list(self._memory_storage.get_known_periods()) + list((
             self._disk_storage.get_known_periods() if self._disk_storage else []))
 
+    def solve_input_data(self, buffer):
+        """
+            Determines individual period values given a input buffer with potentiel overlapping periods and data
+        """
+        if self.variable.set_input == set_input_divide_by_period and self.variable.definition_period == MONTH:
+            # Create grid and determine start and end month
+            keys = buffer.keys()
+            periodMap = {k: periods.period(k) for k in keys}
+            periodValues = periodMap.values()
+            starts = [p.start for p in periodValues]
+            ends = [p.offset(p.size_in_months - 1).start for p in periodValues]
+            start = min(starts)
+            end = max(ends)
+
+            def month_index(instant):
+                return (instant.year - start.year) * 12 + (instant.month - start.month % 12)
+
+            size = month_index(end) + 1
+
+            full_size = (self.population.count, size)
+            presence = np.full(full_size, False)
+            values = self.variable.default_array(full_size)
+
+            # Set single period values
+            for k in keys:
+                p = periodMap[k]
+                if p.size_in_months == 1:
+                    column = month_index(p.start)
+                    presence[:, column], values[:, column] = buffer[k]
+
+            # Set values for multiple period input
+            for k in keys:
+                p = periodMap[k]
+                if p.size_in_months != 1:
+                    # Determine period indexes
+                    idx = np.array(range(p.size_in_months)) + month_index(p.start)
+
+                    counts = p.size_in_months - presence[:, idx].sum(axis=1)
+                    current_sum = values[:, idx].sum(axis=1)
+
+                    p_presence, p_values = buffer[k]
+                    spread_value = (p_values - current_sum) / counts
+
+                    # Set indefined values
+                    values[p_presence, ~presence[p_presence, idx]] = spread_value[p_presence]
+                    presence[p_presence, ~presence[p_presence, idx]] = True
+
+            # Extract relevant slices
+            first = start.period(MONTH)
+            new_buffer = {}
+            for i in range(size):
+                p = first.offset(i)
+                if presence[:, i].any():
+                    new_buffer[str(p)] = values[:, i]
+            return new_buffer
+
+        return {periodKey: buffer[periodKey][1] for periodKey in buffer}
+
     def set_input(self, period, array):
         """
             Set a variable's value (``array``) for a given period (``period``)
