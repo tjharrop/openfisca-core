@@ -147,6 +147,23 @@ class Holder(object):
             # Create grid and determine start and end month
             keys = buffer.keys()
             periodMap = {k: periods.period(k) for k in keys}
+            for k in keys:
+                p = periodMap[k]
+                if p.unit == ETERNITY and self.variable.definition_period != ETERNITY:
+                    error_message = os.linesep.join([
+                        'Unable to set a value for variable {0} for ETERNITY.',
+                        '{0} is only defined for {1}s. Please adapt your input.',
+                        ]).format(
+                            self.variable.name,
+                            self.variable.definition_period
+                        )
+                    raise PeriodMismatchError(
+                        self.variable.name,
+                        p,
+                        self.variable.definition_period,
+                        error_message
+                        )
+
             periodValues = periodMap.values()
             starts = [p.start for p in periodValues]
             start = min(starts)
