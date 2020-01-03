@@ -21,7 +21,7 @@ class SimulationBuilder(object):
         self.persons_plural = None  # Plural name for person entity in current tax and benefits system
 
         # JSON input - Memory of known input values. Indexed by variable or axis name.
-        self.input_buffer: Dict[Variable.name, Dict[str(period), np.array]] = {}
+        self.input_buffer: Dict[Variable.name, Dict[str(period), tuple(np.array, np.array)]] = {}
         self.populations: Dict[Entity.key, Population] = {}
         # JSON input - Number of items of each entity type. Indexed by entities plural names. Should be consistent with ``entity_ids``, including axes.
         self.entity_counts: Dict[Entity.plural, int] = {}
@@ -378,20 +378,21 @@ class SimulationBuilder(object):
         if value is None:
             return
 
-        array = self.get_input(variable.name, str(period_str))
+        data_tuple = self.get_input(variable.name, str(period_str))
 
-        if array is None:
+        if data_tuple is None:
             array_size = self.get_count(entity.plural)
             array = variable.default_array(array_size)
-
+            data_tuple = (np.full(array_size, False), array)
         try:
             value = variable.check_set_value(value)
         except ValueError as error:
             raise SituationParsingError(path_in_json, *error.args)
 
+        (present, array) = data_tuple
+        present[instance_index] = True
         array[instance_index] = value
-
-        self.input_buffer[variable.name][str(period(period_str))] = array
+        self.input_buffer[variable.name][str(period(period_str))] = data_tuple
 
     def finalize_variables_init(self, population):
         # Due to set_input mechanism, we must bufferize all inputs, then actually set them,
@@ -413,7 +414,7 @@ class SimulationBuilder(object):
             # We need to handle small periods first for set_input to work
             sorted_periods = sorted(periods, key=key_period_size)
             for period_value in sorted_periods:
-                values = buffer[str(period_value)]
+                (present, values) = buffer[str(period_value)]
                 # Hack to replicate the values in the persons entity
                 # when we have an axis along a group entity but not persons
                 array = np.tile(values, population.count // len(values))
@@ -508,11 +509,14 @@ class SimulationBuilder(object):
                 axis_period = axis.get('period', self.default_period)
                 axis_name = axis['name']
                 variable = axis_entity.get_variable(axis_name)
-                array = self.get_input(axis_name, axis_period)
-                if array is None:
+                data_tuple = self.get_input(axis_name, axis_period)
+                if data_tuple is None:
                     array = variable.default_array(axis_count * axis_entity_step_size)
+                    present = np.full(array.size, True)
+                else:
+                    array, present = data_tuple
                 array[:] = np.repeat(np.linspace(axis['min'], axis['max'], axis_count), axis_entity_step_size)
-                self.input_buffer[axis_name][str(axis_period)] = array
+                self.input_buffer[axis_name][str(axis_period)] = (present, array)
         else:
             axes_linspaces = [
                 np.linspace(0, first_axis['count'] - 1, first_axis['count'])
@@ -532,12 +536,16 @@ class SimulationBuilder(object):
                     axis_period = axis['period'] or self.default_period
                     axis_name = axis['name']
                     variable = axis_entity.get_variable(axis_name)
-                    array = self.get_input(axis_name, axis_period)
-                    if array is None:
+                    data_tuple = self.get_input(axis_name, axis_period)
+                    if data_tuple is None:
                         array = variable.default_array(cell_count * axis_entity_step_size)
+                        present = np.full(array.size, True)
+                    else:
+                        array, present = data_tuple
+
                     array[:] = axis['min'] \
                         + mesh.reshape(cell_count) * (axis['max'] - axis['min']) / (axis_count - 1)
-                    self.input_buffer[axis_name][str(axis_period)] = array
+                    self.input_buffer[axis_name][str(axis_period)] = (present, array)
 
     def get_variable_entity(self, variable_name):
         return self.variable_entities[variable_name]

@@ -15,7 +15,7 @@ def test_add_axis_on_persons(simulation_builder, persons):
     simulation_builder.register_variable('salary', persons)
     simulation_builder.add_parallel_axis({'count': 3, 'name': 'salary', 'min': 0, 'max': 3000, 'period': '2018-11'})
     simulation_builder.expand_axes()
-    assert simulation_builder.get_input('salary', '2018-11') == approx([0, 1500, 3000])
+    assert simulation_builder.get_input('salary', '2018-11')[1] == approx([0, 1500, 3000])
     assert simulation_builder.get_count('persons') == 3
     assert simulation_builder.get_ids('persons') == ['Alicia0', 'Alicia1', 'Alicia2']
 
@@ -26,7 +26,7 @@ def test_add_axis_without_period(simulation_builder, persons):
     simulation_builder.register_variable('salary', persons)
     simulation_builder.add_parallel_axis({'count': 3, 'name': 'salary', 'min': 0, 'max': 3000})
     simulation_builder.expand_axes()
-    assert simulation_builder.get_input('salary', '2018-11') == approx([0, 1500, 3000])
+    assert simulation_builder.get_input('salary', '2018-11')[1] == approx([0, 1500, 3000])
 
 
 def test_add_two_axes(simulation_builder, persons):
@@ -35,8 +35,8 @@ def test_add_two_axes(simulation_builder, persons):
     simulation_builder.add_parallel_axis({'count': 3, 'name': 'salary', 'min': 0, 'max': 3000, 'period': '2018-11'})
     simulation_builder.add_parallel_axis({'count': 3, 'name': 'pension', 'min': 0, 'max': 2000, 'period': '2018-11'})
     simulation_builder.expand_axes()
-    assert simulation_builder.get_input('salary', '2018-11') == approx([0, 1500, 3000])
-    assert simulation_builder.get_input('pension', '2018-11') == approx([0, 1000, 2000])
+    assert simulation_builder.get_input('salary', '2018-11')[1] == approx([0, 1500, 3000])
+    assert simulation_builder.get_input('pension', '2018-11')[1] == approx([0, 1000, 2000])
 
 
 def test_add_axis_with_group(simulation_builder, persons):
@@ -59,7 +59,7 @@ def test_add_axis_on_group_entity(simulation_builder, persons, group_entity):
     simulation_builder.expand_axes()
     assert simulation_builder.get_count('households') == 4
     assert simulation_builder.get_ids('households') == ['housea0', 'houseb0', 'housea1', 'houseb1']
-    assert simulation_builder.get_input('rent', '2018-11') == approx([0, 0, 3000, 3000])
+    assert simulation_builder.get_input('rent', '2018-11')[1] == approx([0, 0, 3000, 3000])
 
 
 def test_axis_on_group_expands_persons(simulation_builder, persons, group_entity):
@@ -117,8 +117,8 @@ def test_add_perpendicular_axes(simulation_builder, persons):
     simulation_builder.add_parallel_axis({'count': 3, 'name': 'salary', 'min': 0, 'max': 3000, 'period': '2018-11'})
     simulation_builder.add_perpendicular_axis({'count': 2, 'name': 'pension', 'min': 0, 'max': 2000, 'period': '2018-11'})
     simulation_builder.expand_axes()
-    assert simulation_builder.get_input('salary', '2018-11') == approx([0, 1500, 3000, 0, 1500, 3000])
-    assert simulation_builder.get_input('pension', '2018-11') == approx([0, 0, 0, 2000, 2000, 2000])
+    assert simulation_builder.get_input('salary', '2018-11')[1] == approx([0, 1500, 3000, 0, 1500, 3000])
+    assert simulation_builder.get_input('pension', '2018-11')[1] == approx([0, 0, 0, 2000, 2000, 2000])
 
 # Integration test
 
