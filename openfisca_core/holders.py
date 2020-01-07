@@ -171,7 +171,7 @@ class Holder(object):
             end = max(ends)
 
             def month_index(instant):
-                return (instant.year - start.year) * 12 + ((instant.month - start.month) % 12)
+                return (instant.year - start.year) * 12 + (instant.month - start.month)
 
             size = month_index(end) + 1
 
@@ -195,7 +195,8 @@ class Holder(object):
                 p = periodMap[k]
                 if p.size_in_months != 1:
                     # Determine period indexes
-                    idx = slice(month_index(p.start), p.size_in_months)
+                    start_index = month_index(p.start)
+                    idx = slice(start_index, start_index + p.size_in_months)
 
                     counts = p.size_in_months - presence[:, idx].sum(axis=1)
                     current_sum = values[:, idx].sum(axis=1)
