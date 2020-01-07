@@ -87,7 +87,9 @@
     persons:
       Alicia:
         salary:
+          2014-11: 100
           2015-01: 100
+          2015-12: 100
       Bob:
         salary:
           month:2015-01:10: 2000
