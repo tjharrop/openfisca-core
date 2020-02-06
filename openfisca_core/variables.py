@@ -65,7 +65,47 @@ VALUE_TYPES = {
 FORMULA_NAME_PREFIX = 'formula'
 
 
-class Variable(object):
+class Expression(type):
+    def __add__(am, stram):
+
+        #   import ipdb; ipdb.set_trace() ## DEBUG
+
+        class addVariable(Variable):
+            value_type = am.value_type
+            entity = am.entity
+            definition_period = am.definition_period
+
+            def formula(entity, period):
+                return entity(am, period) + entity(stram, period)
+
+        return addVariable
+
+    # def __sub__(a,b):
+    #     class subVariable(Variable):
+    #         def __init__(self, baseline_variable = None):
+    #             super(Variable, self).__init__()
+    #             self.sub_a = a()
+    #             self.sub_b = b()
+    #             self.entity = self.sub_a.entity
+    #             self.definition_period = self.sub_a.definition_period
+    #             self.is_neutralized = self.sub_a.is_neutralized
+    #             self.dtype = self.sub_a.dtype
+    #             self.value_type = self.sub_a.value_type
+    #             self.default_value = self.sub_a.default_value
+
+    #         def get_formula(self, period = None):
+    #             print('get_formula_sub')
+    #             fa = self.sub_a.get_formula(period)
+    #             fb = self.sub_b.get_formula(period)
+    #             def formula(entity, period, parameters):
+    #                 return fa(entity, period, parameters) - fb(entity, period, parameters)                    
+
+    #             return formula
+
+    #     return subVariable
+
+
+class Variable(object, metaclass=Expression):
     """
 
     A `variable <https://openfisca.org/doc/key-concepts/variables.html>`_ of the legislation.
@@ -177,6 +217,8 @@ class Variable(object):
         self.set_input = self.set_set_input(attr.pop('set_input', None))
         self.calculate_output = self.set_calculate_output(attr.pop('calculate_output', None))
         self.is_period_size_independent = self.set(attr, 'is_period_size_independent', allowed_type = bool, default = VALUE_TYPES[self.value_type]['is_period_size_independent'])
+
+        self.name = self.set(attr, 'name', allowed_type = str, default = self.name)
 
         formulas_attr, unexpected_attrs = _partition(attr, lambda name, value: name.startswith(FORMULA_NAME_PREFIX))
         self.formulas = self.set_formulas(formulas_attr)

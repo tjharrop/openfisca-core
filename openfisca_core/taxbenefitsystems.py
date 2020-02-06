@@ -195,6 +195,7 @@ class TaxBenefitSystem(object):
         Adds all OpenFisca variables contained in a given file to the tax and benefit system.
         """
         try:
+            print(file_path)
             file_name = path.splitext(path.basename(file_path))[0]
 
             #  As Python remembers loaded modules by name, in order to prevent collisions, we need to make sure that:
@@ -210,8 +211,12 @@ class TaxBenefitSystem(object):
                 raise
             potential_variables = [getattr(module, item) for item in dir(module) if not item.startswith('__')]
             for pot_variable in potential_variables:
+                if 'Expression' in str(pot_variable):
+                    pot_variable.name = 'two_salary'
+                    #import ipdb; ipdb.set_trace()
+                    self.add_variable(pot_variable)
                 # We only want to get the module classes defined in this module (not imported)
-                if isclass(pot_variable) and issubclass(pot_variable, Variable) and pot_variable.__module__ == module_name:
+                if isclass(pot_variable) and issubclass(pot_variable, Variable) and (pot_variable.__module__ == module_name or pot_variable.__module__ == 'tutu'):
                     self.add_variable(pot_variable)
         except Exception:
             log.error('Unable to load OpenFisca variables from file "{}"'.format(file_path))

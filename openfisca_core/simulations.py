@@ -231,6 +231,8 @@ class Simulation(object):
         """
             Find the ``variable`` formula for the given ``period`` if it exists, and apply it to ``population``.
         """
+        
+        #import ipdb; ipdb.set_trace() ## DEBUG
 
         formula = variable.get_formula(period)
         if formula is None:
