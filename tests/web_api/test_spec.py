@@ -22,9 +22,9 @@ body = json.loads(openAPI_response.data.decode('utf-8'))
 
 
 def test_paths():
-    assert_items_equal(
-        body['paths'],
-        ["/parameter/{parameterID}",
+    res = list(body['paths'].keys())
+    res.sort()
+    expected = ["/parameter/{parameterID}",
         "/parameters",
         "/variable/{variableID}",
         "/variables",
@@ -33,7 +33,8 @@ def test_paths():
         "/calculate",
         "/dependencies",
         "/spec"]
-        )
+    expected.sort()
+    assert_items_equal(res, expected)
 
 
 def test_entity_definition():
